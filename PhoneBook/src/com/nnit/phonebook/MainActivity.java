@@ -1,5 +1,8 @@
 package com.nnit.phonebook;
 
+import com.nnit.phonebook.data.IPBDataSet;
+import com.nnit.phonebook.data.JSONPBDataSource;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
@@ -10,6 +13,8 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        test();
     }
 
 
@@ -17,7 +22,14 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+       
         return true;
+    }
+    
+    private void test(){
+    	JSONPBDataSource ds =  new JSONPBDataSource();
+		ds.setJsonFilePath("iNNIT.json");
+		IPBDataSet set = ds.getDataSet();
     }
     
 }
