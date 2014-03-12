@@ -26,28 +26,30 @@ public class JSONPBDataSource implements IPBDataSource {
 	}
 
 	@Override
-	public IPBDataSet getDataSet(){
+	public IPBDataSet getDataSet() throws Exception{
 		return new ArrayListPBDataSet(this, readDataFromJsonFile());		
 	}
 	
-	private List<PhoneBookItem> readDataFromJsonFile(){
+	private List<PhoneBookItem> readDataFromJsonFile() throws Exception{
 		
 		List<PhoneBookItem> result = new ArrayList<PhoneBookItem>();
 		
 		StringBuilder sb = new StringBuilder();
-		try{
-			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(jsonFilePath)));
-			String line = null;
-			while((line = br.readLine()) != null){
-				sb.append(line);
-			}
-		}catch(IOException exp){
-			exp.printStackTrace();
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(jsonFilePath)));
+		String line = null;
+		while((line = br.readLine()) != null){
+			sb.append(line);
 		}
-		try{
-			JSONObject object = new JSONObject(sb.toString());
-			for(int i = 0; i<26; i++){
-				char c = (char)((int)'A' + i);
+		
+		String text = sb.toString();
+		if(text != null & text.startsWith("\ufeff")){
+			text = text.substring(1);
+		}
+		JSONObject object = new JSONObject(text);
+		for(int i = 0; i<26; i++){
+			char c = (char)((int)'A' + i);
+			if(object.has(Character.toString(c))){
 				JSONArray array = object.getJSONArray(Character.toString(c));
 				int len = array.length();
 				for(int j=0; j<len; j++){
@@ -84,9 +86,8 @@ public class JSONPBDataSource implements IPBDataSource {
 					result.add(item);
 				}
 			}
-		}catch(JSONException exp){
-			exp.printStackTrace();
 		}
+		
 		
 		return result;
 		
