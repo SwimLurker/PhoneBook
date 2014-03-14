@@ -1,6 +1,8 @@
 package com.nnit.phonebook.data;
 
-public class PhoneBookItem {
+import java.io.Serializable;
+
+public class PhoneBookItem implements Serializable{
 	public enum GENDER{
 		MALE, FEMALE, UNKNOWN
 	};

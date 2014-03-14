@@ -16,21 +16,30 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:orientation="vertical" >
-
+ 	
     <TextView
         android:id="@+id/textview"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"  
+        android:padding="11dp"  
     	android:textSize="16sp"   
         />
- 
-    <ListView
-        android:id="@id/android:list"
+ 	<ListView
+        android:id="@+id/brief_list"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
     </ListView>
+    <ListView
+        android:id="@+id/detail_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+    </ListView>
+   
+    
+    
+    
     </LinearLayout>
 
 </RelativeLayout>

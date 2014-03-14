@@ -16,5 +16,14 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
+    
+  	<style name="TitleBarBackground">
+       <item name="android:background">#565656</item>
+    </style>
+
+	<style name="PhoneBookList" parent="android:Theme">
+	    <!-- <item name="android:windowTitleSize">50dp</item> -->
+	     <item name="android:windowTitleBackgroundStyle">@style/TitleBarBackground</item>
+	</style>
 
 </resources>

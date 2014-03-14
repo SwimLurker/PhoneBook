@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal" >
+   	 
+     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:text="PhoneBook" />
+     <LinearLayout 
+	    android:layout_width="wrap_content"
+	    android:layout_height="fill_parent"
+	    android:layout_alignParentRight="true"
+	    android:orientation="horizontal" >
+	     <ImageButton
+	        android:id="@+id/imageBtn_ListDetail"
+	        android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:layout_gravity="center"
+	    	android:layout_marginRight="10dp"
+	        android:background="@layout/btn_list_detail" />
+	    <ImageButton
+	        android:id="@+id/imageBtn_ListBrief"
+        	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:layout_gravity="center"
+	    	android:layout_marginRight="10dp"
+        	android:background="@layout/btn_list_brief" />
+    </LinearLayout>
+</RelativeLayout>

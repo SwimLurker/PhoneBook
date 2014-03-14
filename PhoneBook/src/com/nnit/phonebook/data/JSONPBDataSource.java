@@ -36,7 +36,7 @@ public class JSONPBDataSource implements IPBDataSource {
 		
 		StringBuilder sb = new StringBuilder();
 		
-		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(jsonFilePath)));
+		BufferedReader br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream(jsonFilePath)));
 		String line = null;
 		while((line = br.readLine()) != null){
 			sb.append(line);
