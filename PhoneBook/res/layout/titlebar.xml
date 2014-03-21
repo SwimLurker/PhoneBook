@@ -28,5 +28,19 @@
 	    	android:layout_gravity="center"
 	    	android:layout_marginRight="10dp"
         	android:background="@layout/btn_list_brief" />
+	    <ImageButton
+	        android:id="@+id/imageBtn_Search"
+        	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:layout_gravity="center"
+	    	android:layout_marginRight="10dp"
+        	android:background="@layout/btn_search" />
+	    <ImageButton
+	        android:id="@+id/imageBtn_More"
+        	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:layout_gravity="center"
+	    	android:layout_marginRight="10dp"
+        	android:background="@layout/btn_more" />
     </LinearLayout>
 </RelativeLayout>

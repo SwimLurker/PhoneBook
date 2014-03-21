@@ -14,13 +14,17 @@
         android:label="@string/app_name"
         android:theme="@style/PhoneBookList" >
         <activity
-            android:name="com.nnit.phonebook.MainActivity"
-            android:label="@string/app_name" >
+            android:name="com.nnit.phonebook.SplashActivity"
+            android:label="@string/app_name"
+            android:theme="@style/notitle" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.nnit.phonebook.MainActivity" >
+            <action android:name="com.nnit.phonebook.MainActivity" />
         </activity>
         <activity
             android:name="com.nnit.phonebook.DetailActivity" >

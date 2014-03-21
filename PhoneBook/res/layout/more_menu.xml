@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    android:paddingLeft="20dip"
+    android:gravity="right"
+    android:id="@+id/menu_more_layout">
+   <ListView 
+        android:id = "@+id/menu_more_lv" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="7.6dip"
+        android:paddingRight="7.6dip"
+        android:fadingEdge="none"
+        android:focusable="true"
+        android:longClickable="true"
+        android:scrollbarSize="0sp"
+        android:scrollbarStyle="insideOverlay"
+        android:background="@drawable/menu_bg_popup"
+        android:divider="@drawable/menu_bg_line"
+        android:dividerHeight="2px"
+        android:cacheColorHint="#000000" />
+
+</RelativeLayout>
