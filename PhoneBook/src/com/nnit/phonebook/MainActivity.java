@@ -1,13 +1,13 @@
 package com.nnit.phonebook;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.nnit.phonebook.data.IPBDataSet;
 import com.nnit.phonebook.data.JSONPBDataSource;
 import com.nnit.phonebook.data.PhoneBookField;
 import com.nnit.phonebook.data.PhoneBookItem;
-import com.nnit.phonebook.ui.FusionField;
 import com.nnit.phonebook.ui.MenuView;
 import com.nnit.phonebook.ui.PhoneBookListAdapter;
 
@@ -19,6 +19,7 @@ import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -32,7 +33,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +50,7 @@ public class MainActivity extends Activity {
 	//private PopupWindow menuWindow = null;
 	private LayoutInflater inflater = null;
 	private MenuView menuListView = null;
+	private TextView titleTextView = null;
 	
 	
 	public List<PhoneBookItem> getPhoneBookItems(){
@@ -64,13 +68,10 @@ public class MainActivity extends Activity {
         
         setContentView(R.layout.activity_main);
         
-        FusionField.currentActivity = MainActivity.this;
-        FusionField.currentDensity = FusionField.DEFAULT_DENSITY;
-        
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar);
         
-        
         inflater = LayoutInflater.from(this);
+        
         
         /*
     	View menuView = inflater.inflate(R.layout.more_menu, null);
@@ -86,7 +87,8 @@ public class MainActivity extends Activity {
     	menuWindow.setOutsideTouchable(true);
 //    	menuWindow.update();
  */
-    	
+        titleTextView = (TextView)findViewById(R.id.textview_title);
+        
         ImageButton detailListBtn = (ImageButton) findViewById(R.id.imageBtn_ListDetail);
         detailListBtn.setOnClickListener(new OnClickListener(){
 
@@ -129,42 +131,32 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View parent) {
 				// TODO Auto-generated method stub
-				showMoreMenu(parent);
+				switchSysMenuShow();
 			}      	
         });
              
              
         briefListBtn.requestFocus();
         
-        TextView tv = (TextView) findViewById(R.id.textview);
-        ListView lv1 = (ListView) findViewById(R.id.brief_list);
-        ListView lv2 = (ListView) findViewById(R.id.detail_list);
-       
+        if(briefList == null){
+			briefList = (ListView) findViewById(R.id.brief_list);
+		}
         
+        if(detailList == null){
+			detailList = (ListView) findViewById(R.id.detail_list);
+		}
         try{
-        	pbItems = getPhoneBook();
-        	
-        	tv.setText("PhoneBook record number:" + pbItems.size());
-//        	ArrayList<String> a = new ArrayList<String>();
-//        	int len = pbItems.size();
-//        	for(int i=0;i<len ;i++){
-//        		a.add(pbItems.get(i).getInitials());
-//        	}
-//        	ArrayAdapter listItemAdapter = new ArrayAdapter (this,
-//        			R.layout.brief_list_item,
-//        			R.id.textView1,
-//        			a.toArray());
-        	lv1.setAdapter(new PhoneBookListAdapter(this, pbItems));
-        	
-        	
-        	lv2.setAdapter(new PhoneBookListAdapter(this, pbItems));
-        	
+        	pbItems = getPhoneBook(); 	
         }catch(Exception exp){
         	exp.printStackTrace();
-        	tv.setText("Load PhoneBook Error:" + exp.getMessage());
+        	Toast.makeText(this, "Get Phonebook Item Error:" + exp.getMessage(), Toast.LENGTH_LONG).show();
         }
+        titleTextView.setText("PhoneBook(" + pbItems.size() +")");
+        briefList.setAdapter(new PhoneBookListAdapter(this, pbItems));     
+        
+    	detailList.setAdapter(new PhoneBookListAdapter(this, pbItems));
        
-        lv1.setOnItemClickListener(new OnItemClickListener(){
+        briefList.setOnItemClickListener(new OnItemClickListener(){
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
@@ -178,7 +170,7 @@ public class MainActivity extends Activity {
         });
         
         
-        lv2.setOnItemClickListener(new OnItemClickListener(){
+        detailList.setOnItemClickListener(new OnItemClickListener(){
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
@@ -191,7 +183,7 @@ public class MainActivity extends Activity {
         	
         });
         
-        lv2.setVisibility(View.GONE);
+        detailList.setVisibility(View.GONE);
         
     }
     
@@ -237,17 +229,94 @@ public class MainActivity extends Activity {
         	.show();
     }
 
-    private void showMoreMenu(View view){
+    private void showSearchByDialog() {
+    	final View dialogView = inflater.inflate(R.layout.searchby_dialog, null);
     	
-    	initSysMenu();
-    	if(!menuListView.getIsShow()){
-    		menuListView.show();
-    	}else{
-    		menuListView.close();
+    	Spinner depNoSpinner = (Spinner)dialogView.findViewById(R.id.searchby_depNo);
+    	List<String> depNoList = new ArrayList<String>();
+    	depNoList.add("Please Select ...");
+		depNoList.addAll(getAllDeportMentNo());
+		
+		ArrayAdapter<String> depNoAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, depNoList);
+		depNoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		depNoSpinner.setAdapter(depNoAdapter);
+		
+    	
+    	Dialog dialog = new AlertDialog.Builder(this)
+        	.setIcon(R.drawable.ic_launcher)
+        	.setTitle("Please input search criteria:")
+        	.setView(dialogView)
+        	.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO Auto-generated method stub
+					EditText initials_et = (EditText) dialogView.findViewById(R.id.searchby_initials);
+					String initials = initials_et.getText().toString();
+					
+					EditText name_et = (EditText) dialogView.findViewById(R.id.searchby_name);
+					String name = name_et.getText().toString();
+					
+					EditText mobile_et = (EditText) dialogView.findViewById(R.id.searchby_mobile);
+					String mobile = mobile_et.getText().toString();
+					
+					Spinner depNo_spinner = (Spinner) dialogView.findViewById(R.id.searchby_depNo);
+					String depNo = depNo_spinner.getSelectedItemPosition() == 0? null:(String)depNo_spinner.getSelectedItem();
+					
+					EditText manager_et = (EditText) dialogView.findViewById(R.id.searchby_manager);
+					String manager = manager_et.getText().toString();
+					
+					setPhoneBookItems(fullPBDS.filter(PhoneBookField.INITIALS, initials)
+							.filter(PhoneBookField.NAME, name)
+							.filter(PhoneBookField.MOBILE, mobile)
+							.filter(PhoneBookField.DEPARTMENTNO, depNo)
+							.filter(PhoneBookField.MANAGER, manager)
+							.getPBItems());
+					updateLayout();
+				}
+			})
+        	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					
+				}
+			})
+        	.show();
+    }
+    
+    private void showAboutDialog() {
+    	final View dialogView = inflater.inflate(R.layout.about_dialog, null);
+    	Dialog dialog = new AlertDialog.Builder(this)
+        	.setIcon(R.drawable.ic_launcher)
+        	.setTitle("About")
+        	.setView(dialogView)
+        	.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					
+				}
+			})
+        	.show();
+    }
+    
+    private List<String> getAllDeportMentNo(){
+    	ArrayList<String> result = new ArrayList<String>();
+    	List<PhoneBookItem> pbis = fullPBDS.getPBItems();
+    	for(PhoneBookItem pbi: pbis){
+    		String depNo = pbi.getDepartmentNo();
+    		if(!result.contains(depNo)){
+    			result.add(depNo);
+    		}
     	}
+    	Collections.sort(result);
+    	return result;
     }
     
     protected void switchSysMenuShow(){
+    	
     	initSysMenu();
     	if(!menuListView.getIsShow()){
     		menuListView.show();
@@ -260,6 +329,9 @@ public class MainActivity extends Activity {
     	if(menuListView == null){
     		menuListView = new MenuView(this);
     	}
+    	RelativeLayout layout = (RelativeLayout)findViewById(R.id.titlebar_layout);
+        int height = layout.getHeight();
+        menuListView.setTopMargin(height);
     	menuListView.listView.setOnItemClickListener(listClickListener);
     	menuListView.clear();
     	menuListView.add(MenuView.MENU_SEARCHBY, getString(R.string.menuitem_searchby));
@@ -275,10 +347,10 @@ public class MainActivity extends Activity {
 			int key = Integer.parseInt(view.getTag().toString());
 			switch(key){
 				case MenuView.MENU_SEARCHBY:
-					Toast.makeText(MainActivity.this, "Searchby", Toast.LENGTH_LONG).show();
+					showSearchByDialog();
 					break;
 				case MenuView.MENU_ABOUT:
-					Toast.makeText(MainActivity.this, "About", Toast.LENGTH_LONG).show();
+					showAboutDialog();
 					break;
 				default:
 					break;
@@ -301,6 +373,8 @@ public class MainActivity extends Activity {
     }
     
     private void updateLayout(){
+    	titleTextView.setText("PhoneBook(" + pbItems.size() +")");
+    	
     	if(isDetailList){
     		if(detailList == null){
     			detailList = (ListView) findViewById(R.id.detail_list);

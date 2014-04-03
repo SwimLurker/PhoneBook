@@ -21,8 +21,21 @@ public class ArrayListPBDataSet implements IPBDataSet{
 			case INITIALS:
 				result = filterByInitials((String)value);
 				break;		
+			case NAME:
+				result = filterByName((String)value);
+				break;
+			case MOBILE:
+				result = filterByMobile((String)value);
+				break;
+			case DEPARTMENTNO:
+				result = filterByDepNo((String)value);
+				break;
+			case MANAGER:
+				result = filterByManager((String)value);
+				break;
 			default:
 				result = new ArrayList<PhoneBookItem>();
+				result.addAll(this.data);
 				break;
 		}
 		return new ArrayListPBDataSet(dataSource, result);
@@ -44,6 +57,50 @@ public class ArrayListPBDataSet implements IPBDataSet{
 		return result;
 	}
 	
+	private ArrayList<PhoneBookItem> filterByName(String name){
+		ArrayList<PhoneBookItem> result = new ArrayList<PhoneBookItem>();
+		
+		for(PhoneBookItem item:data){
+			if(contains(item.getName(), name)){
+				result.add(item);
+			}
+		}
+		return result;
+	}
+	
+	private ArrayList<PhoneBookItem> filterByMobile(String mobile){
+		ArrayList<PhoneBookItem> result = new ArrayList<PhoneBookItem>();
+		
+		for(PhoneBookItem item:data){
+			if(contains(item.getMobile(),mobile)){
+				result.add(item);
+			}
+		}
+		return result;
+	}
+	
+	private ArrayList<PhoneBookItem> filterByDepNo(String depNo){
+		ArrayList<PhoneBookItem> result = new ArrayList<PhoneBookItem>();
+		
+		for(PhoneBookItem item:data){
+			if(matchEquals(item.getDepartmentNo(), depNo)){
+				result.add(item);
+			}
+		}
+		return result;
+	}
+	
+	private ArrayList<PhoneBookItem> filterByManager(String manager){
+		ArrayList<PhoneBookItem> result = new ArrayList<PhoneBookItem>();
+		
+		for(PhoneBookItem item:data){
+			if(matchEquals(item.getManager(), manager)){
+				result.add(item);
+			}
+		}
+		return result;
+	}
+	
 	private boolean match(String target, String pattern){
 		if(pattern == null || pattern.trim().equals("")){
 			return true;
@@ -53,8 +110,32 @@ public class ArrayListPBDataSet implements IPBDataSet{
 		}
 		String patternStr = getPatternString(pattern);
 		
-		return target.toUpperCase().matches(patternStr);
+		boolean result =  target.toUpperCase().matches(patternStr);
+		return result;
 	}
+	
+	
+	private boolean matchEquals(String target, String pattern){
+		if(pattern == null || pattern.trim().equals("")){
+			return true;
+		}
+		if(target == null){
+			return false;
+		}
+		return target.equalsIgnoreCase(pattern);
+	}
+	
+	private boolean contains(String target, String pattern){
+		if(pattern == null || pattern.trim().equals("")){
+			return true;
+		}
+		if(target == null){
+			return false;
+		}
+		
+		return target.toUpperCase().indexOf(pattern.toUpperCase())!=-1;
+	}
+	
 	
 	private String getPatternString(String str){
 		StringBuffer result = new StringBuffer();
@@ -65,6 +146,7 @@ public class ArrayListPBDataSet implements IPBDataSet{
 				result.append(c);
 			}
 		}
+		result.append("([A-Z]*)");
 		return result.toString();
 	}
 

@@ -2,8 +2,13 @@
 <resources>
 
     <string name="app_name">PhoneBook</string>
-    <string name="menuitem_searchby">Search By</string>
+    <string name="menuitem_searchby">Search By...</string>
     <string name="menuitem_about">About</string>
     <string name="hello_world">Hello world!</string>
-
+    <string name="searchby_initials">Initials:</string>
+    <string name="searchby_name">Name:</string>
+    <string name="searchby_mobile">Mobile:</string>
+    <string name="searchby_depNo">Dep. No:</string>
+    <string name="searchby_manager">Manager:</string>
+    <string name="about">PhoneBook Android v1.0 \r\n by CQLI</string>
 </resources>

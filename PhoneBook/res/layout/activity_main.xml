@@ -16,14 +16,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:orientation="vertical" >
- 	
-    <TextView
-        android:id="@+id/textview"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="11dp"  
-    	android:textSize="16sp"   
-        />
+ 
  	<ListView
         android:id="@+id/brief_list"
         android:layout_width="fill_parent"

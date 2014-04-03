@@ -5,11 +5,14 @@ import java.util.Collections;
 
 import com.nnit.phonebook.R;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Paint;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -33,6 +36,8 @@ public class MenuView extends View{
 	
 	public final static int MENU_ABOUT = 1;
 	
+	public static float SET_TYPE_TEXT_SIZE = 16;
+	
 	private Context mContext;
 	
 	private PopupWindow popWindow;
@@ -45,32 +50,61 @@ public class MenuView extends View{
 	
 	RelativeLayout layout;
 	
+	/**
+     * 横屏菜单距离最大高度
+     */
 	private int bottomLength_h = 77;
 	
+	/**
+     * 竖屏菜单距离最大高度
+     */
 	private int bottomLength_v = 173;
+	
 	
 	private Display display;
 	
+	private float currentDensity;
+	
+	
+	/**
+     * 画板用于测字符宽度
+     */
 	private Paint paint = null;
 	
+	 /**
+     * 菜单中最大的字符宽度
+     */
 	private float maxWidth = 0;
 	
-	private int rightMenuLeft = 45;
+	private int topMargin = 0;
 	
-	private int maxRightWidth = 44;
-	
-	private int minRightWidth = 140;
-	
-	private int maxLeftWidth = 88;
-	
-	private int minLeftWidth = 188;
-	
-	private int maxLeftWidth_h = 282;
-	
-	private int minLeftWidth_h = 371;
-	
-	private int contentSpaceWidth = 38;
-	
+
+    /**
+     * 菜单的最大左边距
+     */
+    private int maxLeftWidth = 88;
+
+    /**
+     * 菜单的最小左边距
+     */
+    private int minLeftWidth = 188;
+
+    /**
+     * 横屏菜单最小左边距
+     */
+    private int maxLeftWidth_h = 282;
+
+    /**
+     * 横屏菜单最小左边距
+     */
+    private int minLeftWidth_h = 371;
+
+    /**
+     * 菜单的背景和文字两边占间距
+     */
+    private int contentSpaceWidth = 38;
+
+
 	private TranslateAnimation myMenuOpen;
 	
 	private TranslateAnimation myMenuClose;
@@ -87,7 +121,9 @@ public class MenuView extends View{
 	
 	private boolean isDismissing = false;
 	
+	
 	ItemTextListAdapter adapter;
+	
 	
 	class MyHandler extends Handler{
 		@Override
@@ -121,6 +157,10 @@ public class MenuView extends View{
 		adapter = new ItemTextListAdapter(mContext);
 		popWindow = new PopupWindow(popView, LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 		display = ((WindowManager)mContext.getSystemService(mContext.WINDOW_SERVICE)).getDefaultDisplay();
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		display.getMetrics(displayMetrics);
+		currentDensity = displayMetrics.density;
+		
 		
 		initValue();
 		
@@ -150,18 +190,24 @@ public class MenuView extends View{
 		
 	}
 	
+	public void setTopMargin(int topMargin){
+		this.topMargin = topMargin;
+	}
 	private void initValue(){
+		
 		paint = new Paint();
-		rightMenuLeft = (int)(rightMenuLeft * FusionField.currentDensity);
-		maxLeftWidth = (int) (maxLeftWidth * FusionField.currentDensity);  
-        minLeftWidth = (int) (minLeftWidth * FusionField.currentDensity);  
-        maxRightWidth = (int) (maxRightWidth * FusionField.currentDensity);  
-        minRightWidth = (int) (minRightWidth * FusionField.currentDensity);  
-        bottomLength_h = (int) (bottomLength_h * FusionField.currentDensity);  
-        bottomLength_v = (int) (bottomLength_v * FusionField.currentDensity);  
-        contentSpaceWidth = (int) (contentSpaceWidth * FusionField.currentDensity);  
-        maxLeftWidth_h = (int) (maxLeftWidth_h * FusionField.currentDensity);  
-        minLeftWidth_h = (int) (minLeftWidth_h * FusionField.currentDensity);  
+		maxLeftWidth = (int) (maxLeftWidth * currentDensity);  
+        minLeftWidth = (int) (minLeftWidth * currentDensity);  
+        maxLeftWidth_h = (int) (maxLeftWidth_h * currentDensity);  
+        minLeftWidth_h = (int) (minLeftWidth_h * currentDensity);  
+        contentSpaceWidth = (int) (contentSpaceWidth * currentDensity);  
+
+		topMargin = (int)(topMargin * currentDensity);
+		bottomLength_h = (int) (bottomLength_h * currentDensity);  
+        bottomLength_v = (int) (bottomLength_v * currentDensity);  
+        
+        
+        
 	}
 	
 	public void add(int key, String value){
@@ -173,10 +219,14 @@ public class MenuView extends View{
 	
 	public void add(int position, int key, String value){
 		MenuItem item = new MenuItem(key, value);
-		if(position == mItems.size()){
-			mItems.add(position, item);
-			adapter.notifyDataSetChanged();
+		int size = mItems.size();
+		for(int i = 0; i<size ; i++){
+			if(position == i){
+				mItems.add(position, item);
+				adapter.notifyDataSetChanged();
+			}
 		}
+		
 	}
 	
 	private void getContextMaxLength(){
@@ -185,11 +235,11 @@ public class MenuView extends View{
 			maxWidth = 0;
 			if (Build.VERSION.SDK_INT >= 14){
 				TextView tv = new TextView(mContext);  
-				tv.setTextSize(FusionField.SET_TYPE_TEXT_SIZE);  
-				float size = tv.getTextSize() / FusionField.SET_TYPE_TEXT_SIZE;  
-				paint.setTextSize((int) ((size * 12) * FusionField.currentDensity));
+				tv.setTextSize(SET_TYPE_TEXT_SIZE);  
+				float size = tv.getTextSize() / SET_TYPE_TEXT_SIZE;  
+				paint.setTextSize((int) ((size * 12) * currentDensity));
 			}else{  
-				paint.setTextSize((int) ((FusionField.SET_TYPE_TEXT_SIZE + 1) * FusionField.currentDensity));  
+				paint.setTextSize((int) ((SET_TYPE_TEXT_SIZE + 1) * currentDensity));  
 			}
 			for(int i=0; i< mItems.size(); i++){
 				if(paint.measureText(mItems.get(i).MenuValue) > maxWidth){
@@ -231,7 +281,7 @@ public class MenuView extends View{
 	
 	
 	public void setMenuPosition(int left, int top, int right, int bottom){
-		layout.setPadding(left, (int) (46 * FusionField.currentDensity), right, bottom);
+		layout.setPadding(left, topMargin + top, right, bottom);
 	}
 	
 	private OnClickListener onclick = new OnClickListener(){
@@ -257,33 +307,6 @@ public class MenuView extends View{
 		}
 	}
 	
-	public void setPositionShow(){
-		try{
-			if(popWindow != null && popView != null){
-				if(popWindow.isShowing()){
-					startMenuCloseAnimation();
-				}else{
-					getContextMaxLength();
-					int right = (int) ((320 * FusionField.currentDensity) - (maxWidth + rightMenuLeft + contentSpaceWidth));  
-					if(right < maxRightWidth){
-						right = maxRightWidth;
-					}else if(right > minRightWidth){
-						right = minRightWidth;
-					}
-					setMenuPosition(rightMenuLeft, 0,0, bottomLength_v);
-					Collections.sort(mItems);
-					
-					popWindow.setFocusable(true);
-					popWindow.update();
-					popWindow.showAtLocation(popView, Gravity.FILL, 0, 0);
-					myHandler.sendEmptyMessage(MENU_OPEN_ANIM);
-				}
-			}
-		}catch(Exception e){
-			Log.i("MenuView", "e:" +e.toString());
-			close();
-		}
-	}
 	
 	public void show(){
 		try{
@@ -293,15 +316,9 @@ public class MenuView extends View{
 				}else{
 					if(mItems != null && mItems.size() > 0){
 						int orientation = display.getOrientation();
-						if(orientation == 0){
-							if(FusionField.currentActivity != null
-									&& FusionField.currentActivity.getCurrentFocus() != null
-									&& FusionField.currentActivity.getCurrentFocus().getWindowToken() != null){
-								((InputMethodManager)FusionField.currentActivity.getSystemService(FusionField.currentActivity.INPUT_METHOD_SERVICE))
-									.hideSoftInputFromWindow(FusionField.currentActivity.getCurrentFocus().getWindowToken(), 0);
-							}
+						if(orientation == 0){													
 							getContextMaxLength();
-							int left = (int)((320 * FusionField.currentDensity) - (maxWidth + contentSpaceWidth));
+							int left = (int)((320 * currentDensity) - (maxWidth + contentSpaceWidth));
 							if(left < maxLeftWidth){
 								left = maxLeftWidth;
 							}else if(left > minLeftWidth){
@@ -310,7 +327,7 @@ public class MenuView extends View{
 							setMenuPosition(left, 0, 0, bottomLength_v);
 						}else{
 							getContextMaxLength();
-							int left = (int)((533 * FusionField.currentDensity) - (maxWidth + contentSpaceWidth));
+							int left = (int)((533 * currentDensity) - ( maxWidth + contentSpaceWidth));
 							if(left < maxLeftWidth_h){
 								left = maxLeftWidth_h;
 							}else if(left > minLeftWidth_h){
@@ -321,7 +338,7 @@ public class MenuView extends View{
 						Collections.sort(mItems);
 						popWindow.setFocusable(true);
 						popWindow.update();
-						popWindow.showAtLocation(listView, Gravity.FILL, 0, (int)(46 * FusionField.currentDensity));
+						popWindow.showAtLocation(listView, Gravity.FILL, 0, 0);
 						myHandler.sendEmptyMessage(MENU_OPEN_ANIM);
 					}
 				}
@@ -383,7 +400,7 @@ public class MenuView extends View{
 			convertView.setTag(R.layout.menu_item, holder);
 			MenuItem item = mItems.get(position);
 			holder.menuName.setText(item.MenuValue);
-			holder.menuName.setTextSize(FusionField.SET_TYPE_TEXT_SIZE);
+			holder.menuName.setTextSize(SET_TYPE_TEXT_SIZE);
 			convertView.setTag(item.MenuKey);
 			return convertView;
 		}
