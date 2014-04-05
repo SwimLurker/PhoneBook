@@ -203,7 +203,7 @@ public class MainActivity extends Activity {
     }
     
     private void showSearchDialog() {
-    	final View dialogView = inflater.inflate(R.layout.search_dialog, null);
+    	final View dialogView = inflater.inflate(R.layout.dialog_search, null);
     	Dialog dialog = new AlertDialog.Builder(this)
         	.setIcon(R.drawable.ic_launcher)
         	.setTitle("Please input Initials")
@@ -230,7 +230,7 @@ public class MainActivity extends Activity {
     }
 
     private void showSearchByDialog() {
-    	final View dialogView = inflater.inflate(R.layout.searchby_dialog, null);
+    	final View dialogView = inflater.inflate(R.layout.dialog_searchby, null);
     	
     	Spinner depNoSpinner = (Spinner)dialogView.findViewById(R.id.searchby_depNo);
     	List<String> depNoList = new ArrayList<String>();
@@ -286,7 +286,7 @@ public class MainActivity extends Activity {
     }
     
     private void showAboutDialog() {
-    	final View dialogView = inflater.inflate(R.layout.about_dialog, null);
+    	final View dialogView = inflater.inflate(R.layout.dialog_about, null);
     	Dialog dialog = new AlertDialog.Builder(this)
         	.setIcon(R.drawable.ic_launcher)
         	.setTitle("About")

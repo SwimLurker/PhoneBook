@@ -218,11 +218,11 @@
 	        android:id ="@+id/detail_callbtn"
 	        android:layout_width = "wrap_content"
 	        android:layout_height = "wrap_content"
-	        android:text="Call" />
+	        android:text="@string/call" />
         <Button
 	        android:id ="@+id/detail_closebtn"
 	        android:layout_width = "wrap_content"
 	        android:layout_height = "wrap_content"
-	        android:text="Close" />
+	        android:text="@string/close" />
      </LinearLayout>
 </RelativeLayout>

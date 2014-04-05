@@ -151,7 +151,7 @@ public class MenuView extends View{
 		mContext = context;
 		mItems = new ArrayList<MenuItem>();
 		LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(mContext.LAYOUT_INFLATER_SERVICE);
-		popView = layoutInflater.inflate(R.layout.more_menu, null);
+		popView = layoutInflater.inflate(R.layout.menu_more, null);
 		listView = (ListView)popView.findViewById(R.id.menu_more_lv);
 		layout = (RelativeLayout)popView.findViewById(R.id.menu_more_layout);
 		adapter = new ItemTextListAdapter(mContext);

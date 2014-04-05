@@ -23,27 +23,27 @@
 	    	android:layout_height="wrap_content"
 	    	android:layout_gravity="center"
 	    	android:layout_marginRight="10dp"
-	        android:background="@layout/btn_list_detail" />
+	        android:background="@layout/selector_btn_detaillist" />
 	    <ImageButton
 	        android:id="@+id/imageBtn_ListBrief"
         	android:layout_width="wrap_content"
 	    	android:layout_height="wrap_content"
 	    	android:layout_gravity="center"
 	    	android:layout_marginRight="10dp"
-        	android:background="@layout/btn_list_brief" />
+        	android:background="@layout/selector_btn_brieflist" />
 	    <ImageButton
 	        android:id="@+id/imageBtn_Search"
         	android:layout_width="wrap_content"
 	    	android:layout_height="wrap_content"
 	    	android:layout_gravity="center"
 	    	android:layout_marginRight="10dp"
-        	android:background="@layout/btn_search" />
+        	android:background="@layout/selector_btn_search" />
 	    <ImageButton
 	        android:id="@+id/imageBtn_More"
         	android:layout_width="wrap_content"
 	    	android:layout_height="wrap_content"
 	    	android:layout_gravity="center"
 	    	android:layout_marginRight="10dp"
-        	android:background="@layout/btn_more" />
+        	android:background="@layout/selector_btn_more" />
     </LinearLayout>
 </RelativeLayout>

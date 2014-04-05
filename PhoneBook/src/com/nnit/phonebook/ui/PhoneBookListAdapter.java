@@ -50,7 +50,7 @@ public class PhoneBookListAdapter extends BaseAdapter{
 		PhoneBookItem pb = pbItems.get(position);
 		if (MainActivity.isDetailList){
 			if(convertView == null){
-				convertView = mInflater.inflate(R.layout.detail_list_item, parent, false);								
+				convertView = mInflater.inflate(R.layout.listitem_detaillist, parent, false);								
 			}
 			TextView tv1 = (TextView)convertView.findViewById(R.id.detailList_Initials);
 			tv1.setText(pb == null? null: pb.getInitials() + "(" + pb.getName() + ")");
@@ -71,7 +71,7 @@ public class PhoneBookListAdapter extends BaseAdapter{
 			
 		}else{
 			if(convertView == null){
-				convertView = mInflater.inflate(R.layout.brief_list_item, parent, false);
+				convertView = mInflater.inflate(R.layout.listitem_brieflist, parent, false);
 			}
 			TextView tv = (TextView)convertView.findViewById(R.id.briefList_Initial);
 			tv.setText(pb == null? null: pb.getInitials() + "(" + pb.getName() +")");

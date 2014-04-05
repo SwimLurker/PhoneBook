@@ -1,12 +1,19 @@
 package com.nnit.phonebook;
 
+import com.nnit.phonebook.data.PhoneBookField;
 import com.nnit.phonebook.data.PhoneBookItem;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -69,6 +76,37 @@ public class DetailActivity extends Activity{
 			@Override
 			public void onClick(View arg0) {
 				finish();				
+			}
+			
+		});
+		
+		Button callBtn = (Button) findViewById(R.id.detail_callbtn);
+		callBtn.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				Dialog dialog = new AlertDialog.Builder(DetailActivity.this)
+		        	.setIcon(R.drawable.ic_launcher)
+		        	.setTitle("Do you want to make the call?")
+		        	.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Intent intent = new Intent();
+						    intent.setAction("android.intent.action.DIAL");
+						    intent.setData(Uri.parse("tel:"+pbItem.getMobile()));
+						    startActivity(intent);
+						    dialog.dismiss();
+						}
+					})
+		        	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();							
+						}
+					})
+		        	.show();
+				
 			}
 			
 		});

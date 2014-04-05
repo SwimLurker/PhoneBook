@@ -10,5 +10,8 @@
     <string name="searchby_mobile">Mobile:</string>
     <string name="searchby_depNo">Dep. No:</string>
     <string name="searchby_manager">Manager:</string>
-    <string name="about">PhoneBook Android v1.0 \r\n by CQLI</string>
+    <string name="version">PhoneBook Android v1.0</string>
+    <string name="author">by CQLI</string>
+    <string name="call">Call Mobile</string>
+    <string name="close">Close</string>
 </resources>
