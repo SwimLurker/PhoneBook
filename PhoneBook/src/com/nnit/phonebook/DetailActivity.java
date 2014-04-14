@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -18,6 +19,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class DetailActivity extends Activity{
+	
+	public static final String TARGET_INITIAL = "com.nnit.phonebook.TARGET_INITIAL";
+	
 	private PhoneBookItem pbItem = null;
 	
 	@Override
@@ -111,6 +115,19 @@ public class DetailActivity extends Activity{
 			
 		});
 		
+		Button mapBtn = (Button) findViewById(R.id.detail_mapbtn);
+		mapBtn.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				
+				Intent intent = new Intent();
+				intent.putExtra(TARGET_INITIAL, pbItem.getInitials());
+				intent.setAction("com.nnit.phonebook.MapActivity");
+				startActivity(intent);
+				
+			}
+			
+		});
 	}
 
 }

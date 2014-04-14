@@ -33,6 +33,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.nnit.phonebook.MapActivity" >
+            <intent-filter>
+                <action android:name="com.nnit.phonebook.MapActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
     <uses-permission android:name="android.permission.CALL_PHONE" />
 </manifest>
