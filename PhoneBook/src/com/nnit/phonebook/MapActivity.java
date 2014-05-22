@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.nnit.phonebook.data.SeatMapInfo;
+import com.nnit.phonebook.db.SeatMapInfoDAO;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -66,9 +67,13 @@ public class MapActivity extends Activity{
 //		screenHeight = dm.heightPixels;
 		
 		
-		String initials = (String) getIntent().getExtras().get(DetailActivity.TARGET_INITIAL);
+		String initials = (String)getIntent().getExtras().get(DetailActivity.TARGET_INITIALS);
 		
 		seatInfo = getSeatInfo(initials);
+		if(seatInfo == null){
+			this.finish();
+			return;
+		}
 		
 		Bitmap bitmap = prepareSeatBitmap(seatInfo);
 		
@@ -213,7 +218,12 @@ public class MapActivity extends Activity{
 				
 				Matrix m1 = new Matrix();
 				m1.set(matrix);
-				m1.setScale(p[0], p[0]);
+				
+				float p3[] = new float[9];
+				
+				m1.getValues(p3);
+				
+				//m1.setScale(p[0], p[0]);
 				//matrix.setTranslate(deltaX, deltaY);
 				m1.postTranslate(deltaX, deltaY);
 				
@@ -264,11 +274,32 @@ public class MapActivity extends Activity{
 				canvas.drawBitmap(mapBmp, m1, paint);
 			
 				RectF rect = seatInfo.getSeatRect();
+				
+//				canvas.drawRect(rect, paint);
+				
+				canvas.save();
+				
+				float x1 = rect.left, y1 = rect.top;
+				float x2 = rect.right, y2 = rect.bottom;
+				double r = Math.sqrt((x2-x1)*(x2-x1) +(y2-y1)*(y2-y1)) /2;
+				
+				float midPoint_x = (x1 + x2) /2;
+				float midPoint_y = (y1 + y2) /2;
+				
+				float w = x2 - x1;
+				float h = y2 - y1;
+				canvas.translate(midPoint_x, midPoint_y);			
+				canvas.rotate(seatInfo.getDirection());
 			
-				canvas.drawLine(rect.left, rect.top, rect.left, rect.bottom, paint);
-				canvas.drawLine(rect.left, rect.bottom, rect.right, rect.bottom, paint);
-				canvas.drawLine(rect.right, rect.bottom, rect.right, rect.top, paint);
-				canvas.drawLine(rect.right, rect.top, rect.left, rect.top, paint);
+				Paint paint2 = new Paint();
+				paint2.setColor(Color.RED);
+				paint2.setStrokeWidth(10);
+				canvas.drawLine(-w/2, h/2, w/2, h/2, paint2);
+				canvas.drawLine(w/2, h/2, w/2, -h/2, paint2);
+				canvas.drawLine(w/2, -h/2, -w/2, -h/2, paint2);
+				canvas.drawLine(-w/2, -h/2, -w/2, h/2, paint2);
+				
+				canvas.restore();
 			}
 		
 			
@@ -280,13 +311,15 @@ public class MapActivity extends Activity{
 	}
 
 	private SeatMapInfo getSeatInfo(String initials) {
-		SeatMapInfo result = new SeatMapInfo();
-		result.setInitials(initials);
-		result.setSeatRect(new RectF(285, 729, 285 + 72, 729 + 44));
-		result.setDirection(0);
-		result.setFloorNo(28);
-		result.setMapFilename("CN.TJ.JW.28.png");
-		return result;
+//		SeatMapInfo result = new SeatMapInfo();
+//		result.setInitials(initials);
+//		result.setSeatRect(new RectF(285, 729, 285 + 72, 729 + 44));
+//		result.setDirection(0);
+//		result.setFloorNo(28);
+//		result.setMapFilename("CN.TJ.JW.28.png");
+		
+		SeatMapInfoDAO dao = new SeatMapInfoDAO();
+		return dao.querySeatMapInfo(initials);
 	}
 
 	private void onTouchDown(MotionEvent event){

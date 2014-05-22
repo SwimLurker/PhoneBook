@@ -25,7 +25,7 @@
 	<style name="PhoneBookList" parent="android:Theme">
 	    <!-- <item name="android:windowTitleSize">50dp</item> -->
 	     <item name="android:windowTitleBackgroundStyle">@style/TitleBarBackground</item>
-	     <item name="android:windowTitleSize">30dip</item>
+	     <item name="android:windowTitleSize">60dip</item>
 	     <item name="android:windowContentOverlay">@android:color/transparent</item>
 	</style>
 	<style name="notitle">

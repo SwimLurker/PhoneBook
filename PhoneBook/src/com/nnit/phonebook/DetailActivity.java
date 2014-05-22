@@ -2,6 +2,8 @@ package com.nnit.phonebook;
 
 import com.nnit.phonebook.data.PhoneBookField;
 import com.nnit.phonebook.data.PhoneBookItem;
+import com.nnit.phonebook.data.SeatMapInfo;
+import com.nnit.phonebook.db.SeatMapInfoDAO;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,7 +22,7 @@ import android.widget.TextView;
 
 public class DetailActivity extends Activity{
 	
-	public static final String TARGET_INITIAL = "com.nnit.phonebook.TARGET_INITIAL";
+	public static final String TARGET_INITIALS = "com.nnit.phonebook.TARGET_INITIALS";
 	
 	private PhoneBookItem pbItem = null;
 	
@@ -120,14 +122,34 @@ public class DetailActivity extends Activity{
 			@Override
 			public void onClick(View arg0) {
 				
-				Intent intent = new Intent();
-				intent.putExtra(TARGET_INITIAL, pbItem.getInitials());
-				intent.setAction("com.nnit.phonebook.MapActivity");
-				startActivity(intent);
+				String initials = pbItem.getInitials();
+				SeatMapInfo seatInfo = getSeatInfo(initials);
+				if(seatInfo == null){
+					Dialog dialog = new AlertDialog.Builder(DetailActivity.this)
+		        	.setIcon(R.drawable.ic_launcher)
+		        	.setTitle("Can not find map info for initial:" + initials)
+		        	.setPositiveButton("Close",new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+						}
+					})
+		        	.show();
+				}else{
+					Intent intent = new Intent();
+					intent.putExtra(TARGET_INITIALS, initials);
+					intent.setAction("com.nnit.phonebook.MapActivity");
+					startActivity(intent);
+				}
 				
 			}
 			
 		});
+	}
+	
+	private SeatMapInfo getSeatInfo(String initials) {	
+		SeatMapInfoDAO dao = new SeatMapInfoDAO();
+		return dao.querySeatMapInfo(initials);
 	}
 
 }

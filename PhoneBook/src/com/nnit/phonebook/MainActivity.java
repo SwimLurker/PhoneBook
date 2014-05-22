@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.nnit.phonebook.data.DataFileManager;
 import com.nnit.phonebook.data.IPBDataSet;
 import com.nnit.phonebook.data.JSONPBDataSource;
 import com.nnit.phonebook.data.PhoneBookField;
@@ -67,6 +68,9 @@ public class MainActivity extends Activity {
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         
         setContentView(R.layout.activity_main);
+        
+        initDataFile();
+        
         
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar);
         
@@ -187,7 +191,15 @@ public class MainActivity extends Activity {
         
     }
     
-    @Override
+    private void initDataFile() {
+    	DataFileManager dfManager = DataFileManager.getInstance();
+		dfManager.setContext(this);
+		dfManager.addImporter("iNNIT.json", R.raw.phonebook);
+		dfManager.addImporter("iNNIT.db", R.raw.seatdb);
+		
+		dfManager.importAllFiles();
+	}
+	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.main, menu);
@@ -363,7 +375,7 @@ public class MainActivity extends Activity {
     
     private List<PhoneBookItem> getPhoneBook() throws Exception{
     	JSONPBDataSource ds =  new JSONPBDataSource();
-		ds.setJsonFilePath("iNNIT.json");
+		ds.setJsonFilePath(DataFileManager.getInstance().getDataFileAbsolutePath("iNNIT.json"));
 		List<PhoneBookItem> result = null;
 		
 		this.fullPBDS = ds.getDataSet();

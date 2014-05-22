@@ -1,8 +1,10 @@
 package com.nnit.phonebook.data;
 
+import java.io.Serializable;
+
 import android.graphics.RectF;
 
-public class SeatMapInfo {
+public class SeatMapInfo{
 	
 	private String initials;
 	private RectF seatRect;

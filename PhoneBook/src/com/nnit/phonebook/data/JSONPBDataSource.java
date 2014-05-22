@@ -2,6 +2,7 @@ package com.nnit.phonebook.data;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class JSONPBDataSource implements IPBDataSource {
 		
 		StringBuilder sb = new StringBuilder();
 		
-		BufferedReader br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream(jsonFilePath)));
+		BufferedReader br = new BufferedReader(new FileReader(jsonFilePath));
 		String line = null;
 		while((line = br.readLine()) != null){
 			sb.append(line);
