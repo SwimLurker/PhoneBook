@@ -34,7 +34,9 @@ public class MenuView extends View{
 	
 	public final static int MENU_SEARCHBY = 0;
 	
-	public final static int MENU_ABOUT = 1;
+	public final static int MENU_UPDATEDATAFILE = 1;
+	
+	public final static int MENU_ABOUT = 2;
 	
 	public static float SET_TYPE_TEXT_SIZE = 16;
 	

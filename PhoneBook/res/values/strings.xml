@@ -3,6 +3,7 @@
 
     <string name="app_name">PhoneBook</string>
     <string name="menuitem_searchby">Search By...</string>
+    <string name="menuitem_updatedatafile">Update Data File...</string>
     <string name="menuitem_about">About</string>
     <string name="hello_world">Hello world!</string>
     <string name="searchby_initials">Initials:</string>
@@ -15,4 +16,7 @@
     <string name="call">Call Mobile</string>
     <string name="close">Close</string>
     <string name="findInMap">Find in Map</string>
+    <string name="database_file">DB File:</string>
+    <string name="phonebook_file">Phonebook File:</string>
+    <string name="browse">Browse...</string>
 </resources>

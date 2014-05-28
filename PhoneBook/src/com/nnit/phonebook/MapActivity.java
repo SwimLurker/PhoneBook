@@ -2,6 +2,7 @@ package com.nnit.phonebook;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 
 import com.nnit.phonebook.data.SeatMapInfo;
 import com.nnit.phonebook.db.SeatMapInfoDAO;
@@ -16,9 +17,11 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.FloatMath;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -47,6 +50,26 @@ public class MapActivity extends Activity{
 	
 	private SeatMapInfo seatInfo = null;
 	
+	private static Paint mapPaint = null;
+	
+	private static Paint textPaint = null;
+	
+	private static Paint positionPaint = null;
+	
+	static{
+		mapPaint = new Paint();
+		mapPaint.setColor(Color.RED);
+		mapPaint.setStrokeWidth(10);
+		
+		textPaint = new Paint();
+		textPaint.setTextSize(40);
+		textPaint.setColor(Color.BLACK);
+		textPaint.setTypeface(Typeface.DEFAULT);
+		
+		positionPaint = new Paint();
+		positionPaint.setColor(Color.RED);
+		positionPaint.setStrokeWidth(10);
+	}
 	
 	private enum MODE{
 		NONE, DRAG, ZOOM
@@ -264,16 +287,20 @@ public class MapActivity extends Activity{
 			
 				Canvas canvas = new Canvas(seatBmp);
 			
-				Paint paint = new Paint();
-				paint.setColor(Color.RED);
-				paint.setStrokeWidth(10);
+				
 			
 				Matrix m1 = new Matrix();
 				//m1.setScale(0.1f, 0.1f);
 			
-				canvas.drawBitmap(mapBmp, m1, paint);
+				canvas.drawBitmap(mapBmp, m1, mapPaint);
+				
+				int statusbarHeight = getStatusBarHeight();
+				
+				canvas.drawText("Floor " + seatInfo.getFloorNo(), 50, statusbarHeight, textPaint);
+				
 			
 				RectF rect = seatInfo.getSeatRect();
+				
 				
 //				canvas.drawRect(rect, paint);
 				
@@ -291,13 +318,11 @@ public class MapActivity extends Activity{
 				canvas.translate(midPoint_x, midPoint_y);			
 				canvas.rotate(seatInfo.getDirection());
 			
-				Paint paint2 = new Paint();
-				paint2.setColor(Color.RED);
-				paint2.setStrokeWidth(10);
-				canvas.drawLine(-w/2, h/2, w/2, h/2, paint2);
-				canvas.drawLine(w/2, h/2, w/2, -h/2, paint2);
-				canvas.drawLine(w/2, -h/2, -w/2, -h/2, paint2);
-				canvas.drawLine(-w/2, -h/2, -w/2, h/2, paint2);
+				
+				canvas.drawLine(-w/2, h/2, w/2, h/2, positionPaint);
+				canvas.drawLine(w/2, h/2, w/2, -h/2, positionPaint);
+				canvas.drawLine(w/2, -h/2, -w/2, -h/2, positionPaint);
+				canvas.drawLine(-w/2, -h/2, -w/2, h/2, positionPaint);
 				
 				canvas.restore();
 			}
@@ -421,5 +446,23 @@ public class MapActivity extends Activity{
 		}
 		matrix.postTranslate(deltaX, deltaY);
 		
+	}
+	
+	private int getStatusBarHeight(){
+		Class<?> c = null;
+		Object obj = null;
+		Field field = null;
+		int x= 0, sbar = 0;
+		try{
+			c = Class.forName("com.android.internal.R$dimen");
+			obj = c.newInstance();
+			field = c.getField("status_bar_height");
+			x = Integer.parseInt(field.get(obj).toString());
+			sbar = getResources().getDimensionPixelSize(x);
+		}catch(Exception e){
+			Log.e("MapActivity", "get status bar height failed");
+			e.printStackTrace();
+		}
+		return sbar;
 	}
 }

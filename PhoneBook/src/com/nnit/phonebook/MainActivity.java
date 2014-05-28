@@ -1,8 +1,13 @@
 package com.nnit.phonebook;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.nnit.phonebook.data.DataFileManager;
 import com.nnit.phonebook.data.IPBDataSet;
@@ -10,6 +15,7 @@ import com.nnit.phonebook.data.JSONPBDataSource;
 import com.nnit.phonebook.data.PhoneBookField;
 import com.nnit.phonebook.data.PhoneBookItem;
 import com.nnit.phonebook.ui.MenuView;
+import com.nnit.phonebook.ui.OpenFileDialog;
 import com.nnit.phonebook.ui.PhoneBookListAdapter;
 
 import android.os.Bundle;
@@ -21,6 +27,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -30,6 +37,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -52,6 +60,9 @@ public class MainActivity extends Activity {
 	private LayoutInflater inflater = null;
 	private MenuView menuListView = null;
 	private TextView titleTextView = null;
+	
+	private EditText updateSeatDBFilenameET = null;
+	private EditText updatePBDataFilenameET = null;
 	
 	
 	public List<PhoneBookItem> getPhoneBookItems(){
@@ -191,6 +202,53 @@ public class MainActivity extends Activity {
         
     }
     
+    @Override
+    protected Dialog onCreateDialog(int id){
+    	
+    	if(id == R.layout.dialog_dbfileselect){
+    		
+    		Map<String, Integer> images = new HashMap<String, Integer>();
+    		images.put(OpenFileDialog.sRoot, R.drawable.filedialog_root);
+	    	images.put(OpenFileDialog.sParent, R.drawable.filedialog_folder_up);
+	    	images.put(OpenFileDialog.sFolder, R.drawable.filedialog_folder);
+	    	images.put(OpenFileDialog.sEmpty, R.drawable.filedialog_file);
+	    	images.put("db", R.drawable.filedialog_dbfile);
+	    	
+	    	Dialog dialog = OpenFileDialog.createDialog(id, this, "Select Seat DB File", 
+	    			new OpenFileDialog.CallbackBundle() {
+	    				@Override
+						public void callback(Bundle bundle) {
+	    					
+	    		    		String fullFileName = bundle.getString("path");
+	    		    		updateSeatDBFilenameET.setText(fullFileName);
+						}
+					}, ".db", images);
+	    	
+	    	return dialog;
+    	}else if(id == R.layout.dialog_pbfileselect){
+    		
+    		Map<String, Integer> images = new HashMap<String, Integer>();
+    		images.put(OpenFileDialog.sRoot, R.drawable.filedialog_root);
+	    	images.put(OpenFileDialog.sParent, R.drawable.filedialog_folder_up);
+	    	images.put(OpenFileDialog.sFolder, R.drawable.filedialog_folder);
+	    	images.put(OpenFileDialog.sEmpty, R.drawable.filedialog_file);
+	    	
+	    	
+	    	Dialog dialog = OpenFileDialog.createDialog(id, this, "Select PhoneBook Data File", 
+	    			new OpenFileDialog.CallbackBundle() {
+	    				@Override
+						public void callback(Bundle bundle) {
+	    					
+	    		    		String fullFileName = bundle.getString("path");
+	    		    		updatePBDataFilenameET.setText(fullFileName);
+						}
+					}, ".json", images);
+	    	
+	    	return dialog;
+    	}
+    	return null;
+    }
+    
     private void initDataFile() {
     	DataFileManager dfManager = DataFileManager.getInstance();
 		dfManager.setContext(this);
@@ -216,6 +274,7 @@ public class MainActivity extends Activity {
     
     private void showSearchDialog() {
     	final View dialogView = inflater.inflate(R.layout.dialog_search, null);
+    	
     	Dialog dialog = new AlertDialog.Builder(this)
         	.setIcon(R.drawable.ic_launcher)
         	.setTitle("Please input Initials")
@@ -297,6 +356,135 @@ public class MainActivity extends Activity {
         	.show();
     }
     
+   
+    private void showUpdateDataFileDialog(){
+    	final View dialogView = inflater.inflate(R.layout.dialog_updatedatafile, null);
+    	updateSeatDBFilenameET = (EditText)dialogView.findViewById(R.id.et_seatdbfilename);
+    	updatePBDataFilenameET = (EditText)dialogView.findViewById(R.id.et_phonebookfilename);
+    	
+    	Button btnDB = (Button)dialogView.findViewById(R.id.btn_browserseatdb);
+    	btnDB.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				showDialog(R.layout.dialog_dbfileselect);
+			}
+    		
+    	});
+    	
+    	Button btnPB = (Button)dialogView.findViewById(R.id.btn_browserphonebook);
+    	btnPB.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				showDialog(R.layout.dialog_pbfileselect);
+			}
+    		
+    	});
+    	
+    	Dialog dialog = new AlertDialog.Builder(this)
+        	.setIcon(R.drawable.ic_launcher)
+        	.setTitle("Update Data File")
+        	.setView(dialogView)
+        	.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					EditText dbfile_et = (EditText)dialogView.findViewById(R.id.et_seatdbfilename);
+					String dbfilePath = dbfile_et.getText().toString();
+					
+					EditText pbfile_et = (EditText)dialogView.findViewById(R.id.et_phonebookfilename);
+					String pbfilePath = pbfile_et.getText().toString();
+					
+					if(dbfilePath.equals("")&&pbfilePath.equals("")){
+						Toast.makeText(MainActivity.this, "Please select data file!", Toast.LENGTH_SHORT).show();
+						return;
+					}
+					
+					if((!dbfilePath.equals("")) && (!updateDataFile("iNNIT.db", dbfilePath))){
+							Toast.makeText(MainActivity.this, "Seat database file update fail", Toast.LENGTH_SHORT).show();		
+							return;
+					}
+					if((!pbfilePath.equals("")) && ((!updateDataFile("iNNIT.json", pbfilePath)) || (!reloadPhonebook()))){
+							Toast.makeText(MainActivity.this, "Phonebook data file update fail", Toast.LENGTH_SHORT).show();
+							return;
+					}
+					
+					Toast.makeText(MainActivity.this, "Update data file succeed", Toast.LENGTH_SHORT).show();
+					dialog.dismiss();
+					
+				}
+
+				private boolean reloadPhonebook() {
+					try{
+			        	pbItems = getPhoneBook(); 	
+			        }catch(Exception exp){
+			        	exp.printStackTrace();
+			        	Toast.makeText(MainActivity.this, "Reload Phone Book Data Error:" + exp.getMessage(), Toast.LENGTH_LONG).show();
+			        	return false;
+			        }
+					updateLayout();
+					
+					return true;
+				}
+
+				private boolean updateDataFile(String datafileName, String dbfilePath) {
+					// TODO Auto-generated method stub
+					File f = new File(dbfilePath);
+					if((!f.exists())||(!f.isFile())){
+						return false;
+					}
+					FileInputStream fis = null;
+					try{
+						fis = new FileInputStream(f);
+						return DataFileManager.getInstance().updateDataFile(datafileName, fis);
+					}catch(Exception exp){
+						Log.e("DataFileManager", "Update data file:" + dbfilePath +" failed");
+						return false;
+					}finally{
+						if(fis != null){
+							try {
+								fis.close();
+							} catch (IOException e) {
+							}
+							fis = null;
+						}
+					}
+				}
+			})
+			.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					
+				}
+			})
+        	.show();
+    }
+    
+    /*
+    private void showUpdateDataFileDialog() {
+    	Map<String, Integer> images = new HashMap<String, Integer>();
+    	images.put(OpenFileDialog.sRoot, R.drawable.filedialog_root);
+    	images.put(OpenFileDialog.sParent, R.drawable.filedialog_folder_up);
+    	images.put(OpenFileDialog.sFolder, R.drawable.filedialog_folder);
+    	images.put("xml", R.drawable.filedialog_xmlfile);
+    	images.put(OpenFileDialog.sEmpty, R.drawable.filedialog_root);
+    	
+    	Dialog dialog = OpenFileDialog.createDialog(0, this, "Open Data File", 
+    			new OpenFileDialog.CallbackBundle() {
+    				@Override
+					public void callback(Bundle bundle) {
+						// TODO Auto-generated method stub
+						
+					}
+				}, ".xml", images);
+    	dialog.show();
+    	
+    }
+    */
+    
     private void showAboutDialog() {
     	final View dialogView = inflater.inflate(R.layout.dialog_about, null);
     	Dialog dialog = new AlertDialog.Builder(this)
@@ -347,6 +535,7 @@ public class MainActivity extends Activity {
     	menuListView.listView.setOnItemClickListener(listClickListener);
     	menuListView.clear();
     	menuListView.add(MenuView.MENU_SEARCHBY, getString(R.string.menuitem_searchby));
+    	menuListView.add(MenuView.MENU_UPDATEDATAFILE, getString(R.string.menuitem_updatedatafile));
     	menuListView.add(MenuView.MENU_ABOUT, getString(R.string.menuitem_about));
     	
     }
@@ -360,6 +549,9 @@ public class MainActivity extends Activity {
 			switch(key){
 				case MenuView.MENU_SEARCHBY:
 					showSearchByDialog();
+					break;
+				case MenuView.MENU_UPDATEDATAFILE:
+					showUpdateDataFileDialog();
 					break;
 				case MenuView.MENU_ABOUT:
 					showAboutDialog();

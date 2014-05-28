@@ -1,6 +1,7 @@
 package com.nnit.phonebook.data;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -143,6 +144,64 @@ public class DataFileManager {
 				throw new RuntimeException("can not import data file", e);
 			}
 		}
+		
+		@SuppressLint("NewApi")
+		public void updateDataFile(InputStream is){
+			String datafile = datafilePath + "/" + datafileName;
+			String bakDatafile = datafilePath + "/" + datafileName + ".bak";
+			
+			boolean needRollback = false;
+			boolean updateFailed = false;
+			
+			File f = new File(datafile);
+			if(f.exists()){
+				f.renameTo(new File(bakDatafile));
+				needRollback = true;
+				f.delete();
+			}
+			
+			try{
+				FileOutputStream fos =  new FileOutputStream(datafile);
+				byte[] buffer = new byte[BUFFER_SIZE];
+				int count = 0;
+				while((count = is.read(buffer)) > 0){
+					fos.write(buffer, 0, count);
+				}
+				fos.close();
+				is.close();
+				
+			
+			}catch(Exception e){
+				Log.e("DataFileImporter", "Update exception");
+				updateFailed = true;
+				throw new RuntimeException("can not update data file", e);
+			}finally{
+				if(updateFailed && needRollback){
+					rollback();
+				}
+			}
+		}
+		
+		private void rollback(){
+			String datafile = datafilePath + "/" + datafileName;
+			String bakDatafile = datafilePath + "/" + datafileName + ".bak";
+			
+			File f = new File(datafile);
+			f.delete();
+			File bakf = new File(bakDatafile);
+			bakf.renameTo(f);
+			
+		}
+	}
+
+	public boolean updateDataFile(String datafileName, InputStream is) {
+		DataFileImporter importer = importerMap.get(datafileName);
+		if(importer == null){
+			return false;
+		}
+		importer.updateDataFile(is);
+		
+		return true;
 	}
 
 }

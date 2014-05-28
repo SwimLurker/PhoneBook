@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/tv_dbfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dip"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="5dip"
+        android:layout_marginTop="5dip"
+        android:text="@string/database_file" />
+
+    <EditText
+        android:id="@+id/et_seatdbfilename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tv_dbfile"
+        android:layout_below="@+id/tv_dbfile"
+        android:layout_toLeftOf="@+id/btn_browserseatdb"
+        android:ems="9"
+        android:editable="false" >
+    </EditText>
+
+    <Button
+        android:id="@+id/btn_browserseatdb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tv_dbfile"
+        android:text="@string/browse" />
+
+    <TextView
+        android:id="@+id/tv_phonebookfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/et_seatdbfilename"
+        android:layout_below="@+id/et_seatdbfilename"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="5dp"
+        android:text="@string/phonebook_file" />
+
+    <EditText
+        android:id="@+id/et_phonebookfilename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btn_browserphonebook"
+        android:layout_alignLeft="@+id/tv_phonebookfile"
+        android:layout_toLeftOf="@+id/btn_browserphonebook"
+        android:layout_marginBottom="25dp"
+        android:ems="9"
+        android:editable="false" />
+
+    <Button
+        android:id="@+id/btn_browserphonebook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tv_phonebookfile"
+        android:text="@string/browse" />
+
+</RelativeLayout>
