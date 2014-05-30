@@ -14,9 +14,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,7 +31,12 @@ public class DetailActivity extends Activity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+		
 		setContentView(R.layout.activity_detail);
+		
+		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar_detail);
 		
 		pbItem = (PhoneBookItem) getIntent().getSerializableExtra(MainActivity.SELECTED_PBITEM);
 		
@@ -76,7 +83,7 @@ public class DetailActivity extends Activity{
 		TextView managerTV = (TextView) findViewById(R.id.detail_manager);
 		managerTV.setText(pbItem.getManager());
 		
-		Button closeBtn = (Button) findViewById(R.id.detail_closebtn);
+		ImageButton closeBtn = (ImageButton) findViewById(R.id.imagebtn_closedetail);
 		closeBtn.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -86,7 +93,7 @@ public class DetailActivity extends Activity{
 			
 		});
 		
-		Button callBtn = (Button) findViewById(R.id.detail_callbtn);
+		ImageButton callBtn = (ImageButton) findViewById(R.id.imagebtn_call);
 		callBtn.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -117,7 +124,7 @@ public class DetailActivity extends Activity{
 			
 		});
 		
-		Button mapBtn = (Button) findViewById(R.id.detail_mapbtn);
+		ImageButton mapBtn = (ImageButton) findViewById(R.id.imagebtn_map);
 		mapBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0) {

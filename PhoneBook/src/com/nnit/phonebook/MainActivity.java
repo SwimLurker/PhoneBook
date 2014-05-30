@@ -14,6 +14,7 @@ import com.nnit.phonebook.data.IPBDataSet;
 import com.nnit.phonebook.data.JSONPBDataSource;
 import com.nnit.phonebook.data.PhoneBookField;
 import com.nnit.phonebook.data.PhoneBookItem;
+import com.nnit.phonebook.data.PhotoFileManager;
 import com.nnit.phonebook.ui.MenuView;
 import com.nnit.phonebook.ui.OpenFileDialog;
 import com.nnit.phonebook.ui.PhoneBookListAdapter;
@@ -23,6 +24,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
@@ -63,7 +65,7 @@ public class MainActivity extends Activity {
 	
 	private EditText updateSeatDBFilenameET = null;
 	private EditText updatePBDataFilenameET = null;
-	
+	private EditText updatePhotoPackFilenameET = null;
 	
 	public List<PhoneBookItem> getPhoneBookItems(){
 		return this.pbItems;
@@ -81,9 +83,10 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         
         initDataFile();
+        unpackPhotos(this);
         
         
-        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar);
+        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar_main);
         
         inflater = LayoutInflater.from(this);
         
@@ -104,7 +107,7 @@ public class MainActivity extends Activity {
  */
         titleTextView = (TextView)findViewById(R.id.textview_title);
         
-        ImageButton detailListBtn = (ImageButton) findViewById(R.id.imageBtn_ListDetail);
+        ImageButton detailListBtn = (ImageButton) findViewById(R.id.imagebtn_detaillist);
         detailListBtn.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -115,7 +118,7 @@ public class MainActivity extends Activity {
 			}
         });
         
-        ImageButton briefListBtn = (ImageButton) findViewById(R.id.imageBtn_ListBrief);
+        ImageButton briefListBtn = (ImageButton) findViewById(R.id.imagebtn_brieflist);
         briefListBtn.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -126,7 +129,7 @@ public class MainActivity extends Activity {
 			}      	
         });
                
-        ImageButton searchBtn = (ImageButton) findViewById(R.id.imageBtn_Search);
+        ImageButton searchBtn = (ImageButton) findViewById(R.id.imagebtn_search);
         searchBtn.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -140,7 +143,7 @@ public class MainActivity extends Activity {
     	
     	
         
-        ImageButton moreBtn = (ImageButton) findViewById(R.id.imageBtn_More);
+        ImageButton moreBtn = (ImageButton) findViewById(R.id.imagebtn_more);
         moreBtn.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -202,7 +205,16 @@ public class MainActivity extends Activity {
         
     }
     
-    @Override
+    private void unpackPhotos(Context context) {
+		try{
+			PhotoFileManager.getInstance().unpackPhotosFromAssets(context);
+		}catch(IOException e){
+			Log.e("PhotoFileManager", "Unpack photo files error");
+			e.printStackTrace();
+		}
+		
+	}
+	@Override
     protected Dialog onCreateDialog(int id){
     	
     	if(id == R.layout.dialog_dbfileselect){
@@ -243,6 +255,26 @@ public class MainActivity extends Activity {
 	    		    		updatePBDataFilenameET.setText(fullFileName);
 						}
 					}, ".json", images);
+	    	
+	    	return dialog;
+    	}else if(id == R.layout.dialog_photopackselect){
+    		
+    		Map<String, Integer> images = new HashMap<String, Integer>();
+    		images.put(OpenFileDialog.sRoot, R.drawable.filedialog_root);
+	    	images.put(OpenFileDialog.sParent, R.drawable.filedialog_folder_up);
+	    	images.put(OpenFileDialog.sFolder, R.drawable.filedialog_folder);
+	    	images.put(OpenFileDialog.sEmpty, R.drawable.filedialog_file);
+	    	images.put("zip", R.drawable.filedialog_zipfile);
+	    	
+	    	Dialog dialog = OpenFileDialog.createDialog(id, this, "Select Photo Package File", 
+	    			new OpenFileDialog.CallbackBundle() {
+	    				@Override
+						public void callback(Bundle bundle) {
+	    					
+	    		    		String fullFileName = bundle.getString("path");
+	    		    		updatePhotoPackFilenameET.setText(fullFileName);
+						}
+					}, ".zip", images);
 	    	
 	    	return dialog;
     	}
@@ -361,6 +393,7 @@ public class MainActivity extends Activity {
     	final View dialogView = inflater.inflate(R.layout.dialog_updatedatafile, null);
     	updateSeatDBFilenameET = (EditText)dialogView.findViewById(R.id.et_seatdbfilename);
     	updatePBDataFilenameET = (EditText)dialogView.findViewById(R.id.et_phonebookfilename);
+    	updatePhotoPackFilenameET = (EditText)dialogView.findViewById(R.id.et_photopackfilename);
     	
     	Button btnDB = (Button)dialogView.findViewById(R.id.btn_browserseatdb);
     	btnDB.setOnClickListener(new OnClickListener(){
@@ -382,6 +415,16 @@ public class MainActivity extends Activity {
     		
     	});
     	
+    	Button btnPP = (Button)dialogView.findViewById(R.id.btn_browserphotopack);
+    	btnPP.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				showDialog(R.layout.dialog_photopackselect);
+			}
+    		
+    	});
+    	
     	Dialog dialog = new AlertDialog.Builder(this)
         	.setIcon(R.drawable.ic_launcher)
         	.setTitle("Update Data File")
@@ -390,13 +433,13 @@ public class MainActivity extends Activity {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					EditText dbfile_et = (EditText)dialogView.findViewById(R.id.et_seatdbfilename);
-					String dbfilePath = dbfile_et.getText().toString();
+					String dbfilePath = updateSeatDBFilenameET.getText().toString();
 					
-					EditText pbfile_et = (EditText)dialogView.findViewById(R.id.et_phonebookfilename);
-					String pbfilePath = pbfile_et.getText().toString();
+					String pbfilePath = updatePBDataFilenameET.getText().toString();
 					
-					if(dbfilePath.equals("")&&pbfilePath.equals("")){
+					String ppfilePath = updatePhotoPackFilenameET.getText().toString();
+					
+					if(dbfilePath.equals("")&&pbfilePath.equals("")&&ppfilePath.equals("")){
 						Toast.makeText(MainActivity.this, "Please select data file!", Toast.LENGTH_SHORT).show();
 						return;
 					}
@@ -408,6 +451,11 @@ public class MainActivity extends Activity {
 					if((!pbfilePath.equals("")) && ((!updateDataFile("iNNIT.json", pbfilePath)) || (!reloadPhonebook()))){
 							Toast.makeText(MainActivity.this, "Phonebook data file update fail", Toast.LENGTH_SHORT).show();
 							return;
+					}
+					
+					if((!ppfilePath.equals("")) && ((!updatePhotoPackage(ppfilePath))||(!reloadPhonebook()))){
+						Toast.makeText(MainActivity.this, "Photo package file update fail", Toast.LENGTH_SHORT).show();
+						return;
 					}
 					
 					Toast.makeText(MainActivity.this, "Update data file succeed", Toast.LENGTH_SHORT).show();
@@ -440,6 +488,32 @@ public class MainActivity extends Activity {
 						return DataFileManager.getInstance().updateDataFile(datafileName, fis);
 					}catch(Exception exp){
 						Log.e("DataFileManager", "Update data file:" + dbfilePath +" failed");
+						return false;
+					}finally{
+						if(fis != null){
+							try {
+								fis.close();
+							} catch (IOException e) {
+							}
+							fis = null;
+						}
+					}
+				}
+				
+				private boolean updatePhotoPackage(String packageFileName) {
+					// TODO Auto-generated method stub
+					File f = new File(packageFileName);
+					if((!f.exists())||(!f.isFile())){
+						return false;
+					}
+					
+					FileInputStream fis = null;
+					try{
+						fis = new FileInputStream(f);
+						PhotoFileManager.getInstance().unpackPhotos(MainActivity.this, fis);
+						return true;
+					}catch(Exception exp){
+						Log.e("DataFileManager", "Update photo package file:" + packageFileName +" failed");
 						return false;
 					}finally{
 						if(fis != null){

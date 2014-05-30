@@ -1,5 +1,8 @@
 package com.nnit.phonebook.ui;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 import com.nnit.phonebook.MainActivity;
@@ -11,8 +14,19 @@ import com.nnit.phonebook.data.PhoneBookItem;
 
 
 
+
+
+
+
+
+
+import com.nnit.phonebook.data.PhotoFileManager;
+
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,15 +72,44 @@ public class PhoneBookListAdapter extends BaseAdapter{
 			tv2.setText(pb == null? null: pb.getTitle() + "," + pb.getDepartmentNo() + " " + pb.getDepartment());
 			ImageView iv = (ImageView)convertView.findViewById(R.id.detailList_Photo);
 			
+			
+			
+			FileInputStream fis = null;
 			Resources resources = context.getResources();
 			String initials = (pb == null ? null: pb.getInitials().toLowerCase());
 			
-			int id = context.getResources().getIdentifier(initials, "drawable", "com.nnit.phonebook");
-			if(id == 0){
+			try{
+				String photoFilename = PhotoFileManager.getInstance().getPhotoFilenameByInitials(initials);
+				if(photoFilename == null){
+					iv.setImageResource(R.drawable.photo);
+				}
+				File f = new File(photoFilename);
+			
+				if(f.exists() && f.isFile()){
+					fis = new FileInputStream(f);
+					Bitmap bitmap = BitmapFactory.decodeStream(fis);
+					iv.setImageBitmap(bitmap);
+				}else{
+					iv.setImageResource(R.drawable.photo); 
+				}			
+				
+			}catch(Exception exp){
 				iv.setImageResource(R.drawable.photo); 
-			}else{
-				iv.setImageResource(id);
+			}finally{
+				if(fis != null){
+					try {
+						fis.close();
+					} catch (IOException e) {
+					}
+				}
 			}
+			
+//			int id = context.getResources().getIdentifier(initials, "drawable", "com.nnit.phonebook");
+//			if(id == 0){
+//				iv.setImageResource(R.drawable.photo); 
+//			}else{
+//				iv.setImageResource(id);
+//			}
 			
 			
 		}else{

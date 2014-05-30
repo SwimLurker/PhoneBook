@@ -32,6 +32,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MapActivity extends Activity{
 	public static final float MIN_SCALE = 0.2f;
@@ -80,11 +81,12 @@ public class MapActivity extends Activity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.activity_map);
+		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar_map);
 		
-		DisplayMetrics dm = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(dm);
+//		DisplayMetrics dm = new DisplayMetrics();
+//		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		
 //		screenWidth = dm.widthPixels;
 //		screenHeight = dm.heightPixels;
@@ -98,9 +100,10 @@ public class MapActivity extends Activity{
 			return;
 		}
 		
+		TextView mapTitleTV = (TextView)findViewById(R.id.textview_maptitle);
+		mapTitleTV.setText("Seat Map(" + seatInfo.getInitials() +")");
+		
 		Bitmap bitmap = prepareSeatBitmap(seatInfo);
-		
-		
 		
 		mapImageView = (ImageView)findViewById(R.id.image_map);
 		
@@ -147,13 +150,14 @@ public class MapActivity extends Activity{
 				if(mapViewHeight == 0){
 					Rect frame = new Rect();
 					getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
-					mapViewHeight = frame.height();
+					int top = getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();
+					mapViewHeight = frame.bottom - top;
 					mapViewWidth = frame.width();
 				}
 			}
 		});
 		
-		ImageButton closeBtn = (ImageButton)findViewById(R.id.btn_close);
+		ImageButton closeBtn = (ImageButton)findViewById(R.id.imagebtn_close);
 		
 		closeBtn.setOnClickListener(new OnClickListener(){
 
@@ -165,7 +169,7 @@ public class MapActivity extends Activity{
 			
 		});
 		
-		ImageButton zoomOutBtn = (ImageButton)findViewById(R.id.btn_zoom_out);
+		ImageButton zoomOutBtn = (ImageButton)findViewById(R.id.imagebtn_zoom_out);
 		
 		zoomOutBtn.setOnClickListener(new OnClickListener(){
 
@@ -188,7 +192,7 @@ public class MapActivity extends Activity{
 			
 		});
 		
-		ImageButton zoomInBtn = (ImageButton)findViewById(R.id.btn_zoom_in);
+		ImageButton zoomInBtn = (ImageButton)findViewById(R.id.imagebtn_zoom_in);
 		
 		zoomInBtn.setOnClickListener(new OnClickListener(){
 
@@ -207,7 +211,7 @@ public class MapActivity extends Activity{
 			
 		});
 		
-		ImageButton locateBtn = (ImageButton)findViewById(R.id.btn_locate);
+		ImageButton locateBtn = (ImageButton)findViewById(R.id.imagebtn_locate);
 		
 		locateBtn.setOnClickListener(new OnClickListener(){
 

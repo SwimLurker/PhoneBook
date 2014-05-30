@@ -209,25 +209,4 @@
 	        </LinearLayout>
 	     </LinearLayout>
 	 </LinearLayout>   
-     <LinearLayout 
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
-        <Button
-	        android:id ="@+id/detail_callbtn"
-	        android:layout_width = "wrap_content"
-	        android:layout_height = "wrap_content"
-	        android:text="@string/call" />
-        <Button
-	        android:id ="@+id/detail_mapbtn"
-	        android:layout_width = "wrap_content"
-	        android:layout_height = "wrap_content"
-	        android:text="@string/findInMap" />
-        <Button
-	        android:id ="@+id/detail_closebtn"
-	        android:layout_width = "wrap_content"
-	        android:layout_height = "wrap_content"
-	        android:text="@string/close" />
-     </LinearLayout>
 </RelativeLayout>

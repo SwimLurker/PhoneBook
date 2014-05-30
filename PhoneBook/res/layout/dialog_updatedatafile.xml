@@ -21,8 +21,8 @@
         android:layout_alignLeft="@+id/tv_dbfile"
         android:layout_below="@+id/tv_dbfile"
         android:layout_toLeftOf="@+id/btn_browserseatdb"
-        android:ems="9"
-        android:editable="false" >
+        android:editable="false"
+        android:ems="9" >
     </EditText>
 
     <Button
@@ -39,8 +39,8 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/et_seatdbfilename"
         android:layout_below="@+id/et_seatdbfilename"
-        android:layout_marginTop="24dp"
         android:layout_marginBottom="5dp"
+        android:layout_marginTop="24dp"
         android:text="@string/phonebook_file" />
 
     <EditText
@@ -49,10 +49,10 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/btn_browserphonebook"
         android:layout_alignLeft="@+id/tv_phonebookfile"
-        android:layout_toLeftOf="@+id/btn_browserphonebook"
         android:layout_marginBottom="25dp"
-        android:ems="9"
-        android:editable="false" />
+        android:layout_toLeftOf="@+id/btn_browserphonebook"
+        android:editable="false"
+        android:ems="9" />
 
     <Button
         android:id="@+id/btn_browserphonebook"
@@ -61,5 +61,32 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/tv_phonebookfile"
         android:text="@string/browse" />
+
+    <Button
+        android:id="@+id/btn_browserphotopack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tv_photopackfile"
+        android:text="@string/browse" />
+
+    <TextView
+        android:id="@+id/tv_photopackfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/et_phonebookfilename"
+        android:layout_below="@+id/btn_browserphonebook"
+        android:layout_marginTop="24dp"
+        android:text="@string/photopack_file" />
+
+    <EditText
+        android:id="@+id/et_photopackfilename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tv_photopackfile"
+        android:layout_alignRight="@+id/et_phonebookfilename"
+        android:layout_alignTop="@+id/btn_browserphotopack"
+        android:editable="false"
+        android:ems="9" />
 
 </RelativeLayout>

@@ -31,7 +31,7 @@
                 android:layout_marginLeft="10dip"
                 android:layout_marginRight="5dip"
                 android:layout_marginTop="5dip"
-                android:ems="10"
+                android:ems="9"
                 android:text="" />
         </TableRow>
         <TableRow
@@ -57,7 +57,7 @@
                 android:layout_marginLeft="10dip"
                 android:layout_marginRight="5dip"
                 android:layout_marginTop="5dip"
-                android:ems="10"
+                android:ems="9"
                 android:text="" />
         </TableRow>
         <TableRow
@@ -83,7 +83,7 @@
                 android:layout_marginLeft="10dip"
                 android:layout_marginRight="5dip"
                 android:layout_marginTop="5dip"
-                android:ems="10"
+                android:ems="9"
                 android:inputType="phone"
                 android:text="" />
         </TableRow>
@@ -135,7 +135,7 @@
                 android:layout_marginLeft="10dip"
                 android:layout_marginRight="5dip"
                 android:layout_marginTop="5dip"
-                android:ems="10"
+                android:ems="9"
                 android:text="" />
         </TableRow>
     </TableLayout>
