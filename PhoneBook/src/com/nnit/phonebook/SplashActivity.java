@@ -1,6 +1,5 @@
 package com.nnit.phonebook;
 
-import com.nnit.phonebook.data.DataFileManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

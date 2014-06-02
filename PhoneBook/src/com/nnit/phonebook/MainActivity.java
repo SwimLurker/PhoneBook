@@ -9,12 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.nnit.phonebook.data.DataFileManager;
+import com.nnit.phonebook.data.DataPackageManager;
 import com.nnit.phonebook.data.IPBDataSet;
 import com.nnit.phonebook.data.JSONPBDataSource;
 import com.nnit.phonebook.data.PhoneBookField;
 import com.nnit.phonebook.data.PhoneBookItem;
-import com.nnit.phonebook.data.PhotoFileManager;
+import com.nnit.phonebook.data.PhotoManager;
 import com.nnit.phonebook.ui.MenuView;
 import com.nnit.phonebook.ui.OpenFileDialog;
 import com.nnit.phonebook.ui.PhoneBookListAdapter;
@@ -23,18 +23,14 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -43,9 +39,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,9 +57,7 @@ public class MainActivity extends Activity {
 	private MenuView menuListView = null;
 	private TextView titleTextView = null;
 	
-	private EditText updateSeatDBFilenameET = null;
-	private EditText updatePBDataFilenameET = null;
-	private EditText updatePhotoPackFilenameET = null;
+	private EditText updateDataPackageFilenameET = null;
 	
 	public List<PhoneBookItem> getPhoneBookItems(){
 		return this.pbItems;
@@ -82,8 +74,8 @@ public class MainActivity extends Activity {
         
         setContentView(R.layout.activity_main);
         
-        initDataFile();
-        unpackPhotos(this);
+        unpackDataPackage(this);
+        PhotoManager.getInstance().loadPhotosInfo();
         
         
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar_main);
@@ -205,59 +197,20 @@ public class MainActivity extends Activity {
         
     }
     
-    private void unpackPhotos(Context context) {
+    private void unpackDataPackage(Context context) {
 		try{
-			PhotoFileManager.getInstance().unpackPhotosFromAssets(context);
+			DataPackageManager.getInstance().unpackDataPackageFromAssets(context, false);
 		}catch(IOException e){
-			Log.e("PhotoFileManager", "Unpack photo files error");
+			Log.e("DataPackageManager", "Unpack data files error");
 			e.printStackTrace();
 		}
 		
 	}
+    
 	@Override
     protected Dialog onCreateDialog(int id){
     	
-    	if(id == R.layout.dialog_dbfileselect){
-    		
-    		Map<String, Integer> images = new HashMap<String, Integer>();
-    		images.put(OpenFileDialog.sRoot, R.drawable.filedialog_root);
-	    	images.put(OpenFileDialog.sParent, R.drawable.filedialog_folder_up);
-	    	images.put(OpenFileDialog.sFolder, R.drawable.filedialog_folder);
-	    	images.put(OpenFileDialog.sEmpty, R.drawable.filedialog_file);
-	    	images.put("db", R.drawable.filedialog_dbfile);
-	    	
-	    	Dialog dialog = OpenFileDialog.createDialog(id, this, "Select Seat DB File", 
-	    			new OpenFileDialog.CallbackBundle() {
-	    				@Override
-						public void callback(Bundle bundle) {
-	    					
-	    		    		String fullFileName = bundle.getString("path");
-	    		    		updateSeatDBFilenameET.setText(fullFileName);
-						}
-					}, ".db", images);
-	    	
-	    	return dialog;
-    	}else if(id == R.layout.dialog_pbfileselect){
-    		
-    		Map<String, Integer> images = new HashMap<String, Integer>();
-    		images.put(OpenFileDialog.sRoot, R.drawable.filedialog_root);
-	    	images.put(OpenFileDialog.sParent, R.drawable.filedialog_folder_up);
-	    	images.put(OpenFileDialog.sFolder, R.drawable.filedialog_folder);
-	    	images.put(OpenFileDialog.sEmpty, R.drawable.filedialog_file);
-	    	
-	    	
-	    	Dialog dialog = OpenFileDialog.createDialog(id, this, "Select PhoneBook Data File", 
-	    			new OpenFileDialog.CallbackBundle() {
-	    				@Override
-						public void callback(Bundle bundle) {
-	    					
-	    		    		String fullFileName = bundle.getString("path");
-	    		    		updatePBDataFilenameET.setText(fullFileName);
-						}
-					}, ".json", images);
-	    	
-	    	return dialog;
-    	}else if(id == R.layout.dialog_photopackselect){
+    	if(id == R.layout.dialog_datapackageselect){
     		
     		Map<String, Integer> images = new HashMap<String, Integer>();
     		images.put(OpenFileDialog.sRoot, R.drawable.filedialog_root);
@@ -266,13 +219,13 @@ public class MainActivity extends Activity {
 	    	images.put(OpenFileDialog.sEmpty, R.drawable.filedialog_file);
 	    	images.put("zip", R.drawable.filedialog_zipfile);
 	    	
-	    	Dialog dialog = OpenFileDialog.createDialog(id, this, "Select Photo Package File", 
+	    	Dialog dialog = OpenFileDialog.createDialog(id, this, "Select Data Package File", 
 	    			new OpenFileDialog.CallbackBundle() {
 	    				@Override
 						public void callback(Bundle bundle) {
 	    					
 	    		    		String fullFileName = bundle.getString("path");
-	    		    		updatePhotoPackFilenameET.setText(fullFileName);
+	    		    		updateDataPackageFilenameET.setText(fullFileName);
 						}
 					}, ".zip", images);
 	    	
@@ -281,14 +234,7 @@ public class MainActivity extends Activity {
     	return null;
     }
     
-    private void initDataFile() {
-    	DataFileManager dfManager = DataFileManager.getInstance();
-		dfManager.setContext(this);
-		dfManager.addImporter("iNNIT.json", R.raw.phonebook);
-		dfManager.addImporter("iNNIT.db", R.raw.seatdb);
-		
-		dfManager.importAllFiles();
-	}
+    
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -390,80 +336,49 @@ public class MainActivity extends Activity {
     
    
     private void showUpdateDataFileDialog(){
-    	final View dialogView = inflater.inflate(R.layout.dialog_updatedatafile, null);
-    	updateSeatDBFilenameET = (EditText)dialogView.findViewById(R.id.et_seatdbfilename);
-    	updatePBDataFilenameET = (EditText)dialogView.findViewById(R.id.et_phonebookfilename);
-    	updatePhotoPackFilenameET = (EditText)dialogView.findViewById(R.id.et_photopackfilename);
+    	final View dialogView = inflater.inflate(R.layout.dialog_updatedatapackage, null);
+    	updateDataPackageFilenameET = (EditText)dialogView.findViewById(R.id.et_datapackagefilename);
     	
-    	Button btnDB = (Button)dialogView.findViewById(R.id.btn_browserseatdb);
-    	btnDB.setOnClickListener(new OnClickListener(){
+    	Button btnDataPackage = (Button)dialogView.findViewById(R.id.btn_browserdatapackage);
+    	btnDataPackage.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
-				showDialog(R.layout.dialog_dbfileselect);
+				showDialog(R.layout.dialog_datapackageselect);
 			}
     		
     	});
     	
-    	Button btnPB = (Button)dialogView.findViewById(R.id.btn_browserphonebook);
-    	btnPB.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v) {
-				showDialog(R.layout.dialog_pbfileselect);
-			}
-    		
-    	});
     	
-    	Button btnPP = (Button)dialogView.findViewById(R.id.btn_browserphotopack);
-    	btnPP.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v) {
-				showDialog(R.layout.dialog_photopackselect);
-			}
-    		
-    	});
     	
     	Dialog dialog = new AlertDialog.Builder(this)
         	.setIcon(R.drawable.ic_launcher)
-        	.setTitle("Update Data File")
+        	.setTitle("Update Data Package")
         	.setView(dialogView)
         	.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					String dbfilePath = updateSeatDBFilenameET.getText().toString();
+					String dataPackagePath = updateDataPackageFilenameET.getText().toString();
 					
-					String pbfilePath = updatePBDataFilenameET.getText().toString();
 					
-					String ppfilePath = updatePhotoPackFilenameET.getText().toString();
-					
-					if(dbfilePath.equals("")&&pbfilePath.equals("")&&ppfilePath.equals("")){
-						Toast.makeText(MainActivity.this, "Please select data file!", Toast.LENGTH_SHORT).show();
+					if(dataPackagePath.equals("")){
+						Toast.makeText(MainActivity.this, "Please select data package file!", Toast.LENGTH_SHORT).show();
 						return;
 					}
 					
-					if((!dbfilePath.equals("")) && (!updateDataFile("iNNIT.db", dbfilePath))){
-							Toast.makeText(MainActivity.this, "Seat database file update fail", Toast.LENGTH_SHORT).show();		
-							return;
-					}
-					if((!pbfilePath.equals("")) && ((!updateDataFile("iNNIT.json", pbfilePath)) || (!reloadPhonebook()))){
+					
+					if((!dataPackagePath.equals("")) && ((!updateDataPackageFile(dataPackagePath)) || (!reloadData()))){
 							Toast.makeText(MainActivity.this, "Phonebook data file update fail", Toast.LENGTH_SHORT).show();
 							return;
 					}
 					
-					if((!ppfilePath.equals("")) && ((!updatePhotoPackage(ppfilePath))||(!reloadPhonebook()))){
-						Toast.makeText(MainActivity.this, "Photo package file update fail", Toast.LENGTH_SHORT).show();
-						return;
-					}
-					
-					Toast.makeText(MainActivity.this, "Update data file succeed", Toast.LENGTH_SHORT).show();
+					Toast.makeText(MainActivity.this, "Update data package succeed", Toast.LENGTH_SHORT).show();
 					dialog.dismiss();
 					
 				}
 
-				private boolean reloadPhonebook() {
+				private boolean reloadData() {
 					try{
 			        	pbItems = getPhoneBook(); 	
 			        }catch(Exception exp){
@@ -471,36 +386,15 @@ public class MainActivity extends Activity {
 			        	Toast.makeText(MainActivity.this, "Reload Phone Book Data Error:" + exp.getMessage(), Toast.LENGTH_LONG).show();
 			        	return false;
 			        }
+					
+					PhotoManager.getInstance().loadPhotosInfo();
+					
 					updateLayout();
 					
 					return true;
 				}
-
-				private boolean updateDataFile(String datafileName, String dbfilePath) {
-					// TODO Auto-generated method stub
-					File f = new File(dbfilePath);
-					if((!f.exists())||(!f.isFile())){
-						return false;
-					}
-					FileInputStream fis = null;
-					try{
-						fis = new FileInputStream(f);
-						return DataFileManager.getInstance().updateDataFile(datafileName, fis);
-					}catch(Exception exp){
-						Log.e("DataFileManager", "Update data file:" + dbfilePath +" failed");
-						return false;
-					}finally{
-						if(fis != null){
-							try {
-								fis.close();
-							} catch (IOException e) {
-							}
-							fis = null;
-						}
-					}
-				}
 				
-				private boolean updatePhotoPackage(String packageFileName) {
+				private boolean updateDataPackageFile(String packageFileName) {
 					// TODO Auto-generated method stub
 					File f = new File(packageFileName);
 					if((!f.exists())||(!f.isFile())){
@@ -510,10 +404,10 @@ public class MainActivity extends Activity {
 					FileInputStream fis = null;
 					try{
 						fis = new FileInputStream(f);
-						PhotoFileManager.getInstance().unpackPhotos(MainActivity.this, fis);
+						DataPackageManager.getInstance().unpackDataPackageFromInputStream(fis, true);
 						return true;
 					}catch(Exception exp){
-						Log.e("DataFileManager", "Update photo package file:" + packageFileName +" failed");
+						Log.e("DataPackageManager", "Update data package file:" + packageFileName +" failed");
 						return false;
 					}finally{
 						if(fis != null){
@@ -641,7 +535,7 @@ public class MainActivity extends Activity {
     
     private List<PhoneBookItem> getPhoneBook() throws Exception{
     	JSONPBDataSource ds =  new JSONPBDataSource();
-		ds.setJsonFilePath(DataFileManager.getInstance().getDataFileAbsolutePath("iNNIT.json"));
+		ds.setJsonFilePath(DataPackageManager.getInstance().getPhoneBookDataFileAbsolutePath());
 		List<PhoneBookItem> result = null;
 		
 		this.fullPBDS = ds.getDataSet();

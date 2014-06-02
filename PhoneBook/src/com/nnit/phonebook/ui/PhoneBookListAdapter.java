@@ -20,7 +20,7 @@ import com.nnit.phonebook.data.PhoneBookItem;
 
 
 
-import com.nnit.phonebook.data.PhotoFileManager;
+import com.nnit.phonebook.data.PhotoManager;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -79,7 +79,7 @@ public class PhoneBookListAdapter extends BaseAdapter{
 			String initials = (pb == null ? null: pb.getInitials().toLowerCase());
 			
 			try{
-				String photoFilename = PhotoFileManager.getInstance().getPhotoFilenameByInitials(initials);
+				String photoFilename = PhotoManager.getInstance().getPhotoFilenameByInitials(initials);
 				if(photoFilename == null){
 					iv.setImageResource(R.drawable.photo);
 				}

@@ -1,7 +1,12 @@
 package com.nnit.phonebook;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 import com.nnit.phonebook.data.PhoneBookField;
 import com.nnit.phonebook.data.PhoneBookItem;
+import com.nnit.phonebook.data.PhotoManager;
 import com.nnit.phonebook.data.SeatMapInfo;
 import com.nnit.phonebook.db.SeatMapInfoDAO;
 
@@ -10,6 +15,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -42,9 +49,33 @@ public class DetailActivity extends Activity{
 		
 		String initials = pbItem.getInitials().toLowerCase();
 		ImageView photoIV = (ImageView) findViewById(R.id.detail_photo);
-		int id = getResources().getIdentifier(initials, "drawable", "com.nnit.phonebook");
-		if(id != 0){
-			photoIV.setImageResource(id);
+		
+
+		FileInputStream fis = null;
+		try{
+			String photoFilename = PhotoManager.getInstance().getPhotoFilenameByInitials(initials);
+			if(photoFilename == null){
+				photoIV.setImageResource(R.drawable.photo);
+			}
+			File f = new File(photoFilename);
+		
+			if(f.exists() && f.isFile()){
+				fis = new FileInputStream(f);
+				Bitmap bitmap = BitmapFactory.decodeStream(fis);
+				photoIV.setImageBitmap(bitmap);
+			}else{
+				photoIV.setImageResource(R.drawable.photo); 
+			}			
+			
+		}catch(Exception exp){
+			photoIV.setImageResource(R.drawable.photo); 
+		}finally{
+			if(fis != null){
+				try {
+					fis.close();
+				} catch (IOException e) {
+				}
+			}
 		}
 		
 		TextView initialTV = (TextView) findViewById(R.id.detail_initials);

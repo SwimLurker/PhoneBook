@@ -16,9 +16,7 @@
     <string name="call">Call Mobile</string>
     <string name="close">Close</string>
     <string name="findInMap">Find in Map</string>
-    <string name="database_file">DB File:</string>
-    <string name="phonebook_file">Phonebook File:</string>
-    <string name="photopack_file">Photo Package:</string>
+    <string name="datapackage_file">Data Package File:</string>
     <string name="browse">Browse...</string>
     <string name="maintitle">Phonebook</string>
     <string name="detailtitle">Detail Info</string>

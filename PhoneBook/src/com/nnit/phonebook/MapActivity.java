@@ -1,9 +1,11 @@
 package com.nnit.phonebook;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 
+import com.nnit.phonebook.data.DataPackageManager;
 import com.nnit.phonebook.data.SeatMapInfo;
 import com.nnit.phonebook.db.SeatMapInfoDAO;
 
@@ -277,7 +279,7 @@ public class MapActivity extends Activity{
 			opt.inPurgeable = true;
 			opt.inInputShareable = true;
 			
-			InputStream is = getResources().getAssets().open(seatInfo.getMapFilename());
+			InputStream is = new FileInputStream(DataPackageManager.getInstance().getMapDirAbsolutePath()+seatInfo.getMapFilename());
 			
 			if(is != null){
 				Bitmap mapBmp = BitmapFactory.decodeStream(is, null, opt);
