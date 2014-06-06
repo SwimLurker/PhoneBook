@@ -11,7 +11,6 @@ public class PhoneBookItem implements Serializable{
 	private String localName = null;
 	private GENDER gender = GENDER.UNKNOWN;
 	private String phone = null;
-	private String mobile =  null;
 	private String departmentNo = null;
 	private String department = null;
 	private String title = null;
@@ -46,12 +45,6 @@ public class PhoneBookItem implements Serializable{
 	}
 	public void setPhone(String phone) {
 		this.phone = phone;
-	}
-	public String getMobile() {
-		return mobile;
-	}
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
 	}
 	public String getDepartmentNo() {
 		return departmentNo;

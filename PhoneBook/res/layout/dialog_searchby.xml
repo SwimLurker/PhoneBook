@@ -72,10 +72,10 @@
                 android:layout_marginLeft="10dip"
                 android:layout_marginRight="5dip"
                 android:layout_marginTop="5dip"
-                android:text="@string/searchby_mobile" />
+                android:text="@string/searchby_phone" />
 
             <EditText
-                android:id="@+id/searchby_mobile"
+                android:id="@+id/searchby_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
@@ -99,10 +99,10 @@
                 android:layout_marginLeft="10dip"
                 android:layout_marginRight="5dip"
                 android:layout_marginTop="5dip"
-                android:text="@string/searchby_depNo" />
+                android:text="@string/searchby_depName" />
 
             <Spinner
-                android:id="@+id/searchby_depNo"
+                android:id="@+id/searchby_depName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"

@@ -281,14 +281,14 @@ public class MainActivity extends Activity {
     private void showSearchByDialog() {
     	final View dialogView = inflater.inflate(R.layout.dialog_searchby, null);
     	
-    	Spinner depNoSpinner = (Spinner)dialogView.findViewById(R.id.searchby_depNo);
-    	List<String> depNoList = new ArrayList<String>();
-    	depNoList.add("Please Select ...");
-		depNoList.addAll(getAllDeportMentNo());
+    	Spinner depNameSpinner = (Spinner)dialogView.findViewById(R.id.searchby_depName);
+    	List<String> depNameList = new ArrayList<String>();
+    	depNameList.add("Please Select ...");
+    	depNameList.addAll(getAllDeportMents());
 		
-		ArrayAdapter<String> depNoAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, depNoList);
-		depNoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		depNoSpinner.setAdapter(depNoAdapter);
+		ArrayAdapter<String> depNameAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, depNameList);
+		depNameAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		depNameSpinner.setAdapter(depNameAdapter);
 		
     	
     	Dialog dialog = new AlertDialog.Builder(this)
@@ -305,19 +305,19 @@ public class MainActivity extends Activity {
 					EditText name_et = (EditText) dialogView.findViewById(R.id.searchby_name);
 					String name = name_et.getText().toString();
 					
-					EditText mobile_et = (EditText) dialogView.findViewById(R.id.searchby_mobile);
-					String mobile = mobile_et.getText().toString();
+					EditText phone_et = (EditText) dialogView.findViewById(R.id.searchby_phone);
+					String phone = phone_et.getText().toString();
 					
-					Spinner depNo_spinner = (Spinner) dialogView.findViewById(R.id.searchby_depNo);
-					String depNo = depNo_spinner.getSelectedItemPosition() == 0? null:(String)depNo_spinner.getSelectedItem();
+					Spinner depName_spinner = (Spinner) dialogView.findViewById(R.id.searchby_depName);
+					String depName = depName_spinner.getSelectedItemPosition() == 0? null:(String)depName_spinner.getSelectedItem();
 					
 					EditText manager_et = (EditText) dialogView.findViewById(R.id.searchby_manager);
 					String manager = manager_et.getText().toString();
 					
 					setPhoneBookItems(fullPBDS.filter(PhoneBookField.INITIALS, initials)
 							.filter(PhoneBookField.NAME, name)
-							.filter(PhoneBookField.MOBILE, mobile)
-							.filter(PhoneBookField.DEPARTMENTNO, depNo)
+							.filter(PhoneBookField.PHONE, phone)
+							.filter(PhoneBookField.DEPARTMENT, depName)
 							.filter(PhoneBookField.MANAGER, manager)
 							.getPBItems());
 					updateLayout();
@@ -470,13 +470,13 @@ public class MainActivity extends Activity {
         	.show();
     }
     
-    private List<String> getAllDeportMentNo(){
+    private List<String> getAllDeportMents(){
     	ArrayList<String> result = new ArrayList<String>();
     	List<PhoneBookItem> pbis = fullPBDS.getPBItems();
     	for(PhoneBookItem pbi: pbis){
-    		String depNo = pbi.getDepartmentNo();
-    		if(!result.contains(depNo)){
-    			result.add(depNo);
+    		String depName = pbi.getDepartment();
+    		if(!result.contains(depName)){
+    			result.add(depName);
     		}
     	}
     	Collections.sort(result);

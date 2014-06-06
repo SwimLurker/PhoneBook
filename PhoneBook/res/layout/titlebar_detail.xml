@@ -25,6 +25,13 @@
 	    	android:layout_gravity="center"
 	    	android:layout_marginRight="5dp"
 	        android:background="@layout/selector_btn_call" />
+	     <ImageButton
+	        android:id="@+id/imagebtn_newcontact"
+	        android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:layout_gravity="center"
+	    	android:layout_marginRight="5dp"
+	        android:background="@layout/selector_btn_newcontact" />
 	    <ImageButton
 	        android:id="@+id/imagebtn_map"
         	android:layout_width="wrap_content"

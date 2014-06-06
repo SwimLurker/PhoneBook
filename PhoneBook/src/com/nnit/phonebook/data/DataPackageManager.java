@@ -46,16 +46,21 @@ public class DataPackageManager {
 		unpackDataPackage(context.getResources().getAssets().open(DATA_PACKAGE_NAME), bOverwrite);
 	}
 	
-	public void unpackDataPackageFromInputStream(InputStream dataPackageIS, boolean bOverwrite)throws IOException {
+	public void unpackDataPackageFromInputStream(InputStream dataPackageIS, boolean bOverwrite)throws Exception {
 		backupDataFiles();
-		unpackDataPackage(dataPackageIS, bOverwrite);		
+		try{
+			unpackDataPackage(dataPackageIS, bOverwrite);		
+		}catch(Exception exp){
+			rollbackDataFiles();
+			throw exp;
+		}
 	}
 	
 	private void backupDataFiles(){
 		File f = new File(DATAPACKAGE_DIR);
 		if(f.exists() && f.isDirectory()){
 			File backDir = new File(DATAPACKAGE_DIR + BACKUP_DIR + File.separator);
-			backDir.delete();
+			delete(backDir);
 			backDir.mkdirs();
 			
 			File[] files = f.listFiles();
@@ -68,21 +73,62 @@ public class DataPackageManager {
 					sf.renameTo(new File(DATAPACKAGE_DIR + BACKUP_DIR + File.separator + sf.getName()));
 				}
 			}
+		}
+		deleteDataFiles();
+		
+	}
+	
+	private void rollbackDataFiles(){
+		File f = new File(DATAPACKAGE_DIR + BACKUP_DIR + File.separator);
+		if(f.exists() && f.isDirectory()){
+			deleteDataFiles();
 			
+			File[] files = f.listFiles();
+			for(File sf: files){
+				if(sf.isDirectory()){
+					sf.renameTo(new File(DATAPACKAGE_DIR + sf.getName()));
+				}else if(sf.isFile()){
+					sf.renameTo(new File(DATAPACKAGE_DIR + sf.getName()));
+				}
+			}
+			
+			delete(f);
+		}
+	}
+	
+	private void deleteDataFiles(){
+		File f = new File(DATAPACKAGE_DIR);
+		if(f.exists() && f.isDirectory()){
 			File[] files2 = f.listFiles();
 			for(File sf: files2){
 				if(sf.isDirectory()&&(sf.getName().equalsIgnoreCase(BACKUP_DIR))){
 						continue;
 				}
-				sf.delete();
+				delete(sf);
+			}
+		}
+	}
+	
+	private void delete(File f){
+		if(f.isFile()){
+			f.delete();
+		}else if(f.isDirectory()){
+			File[] childFiles = f.listFiles();
+			if(childFiles == null || childFiles.length == 0){
+				f.delete();
+			}else{
+				for(File ff:childFiles){
+					delete(ff);
+				}
+				f.delete();
 			}
 			
 		}
-		
 	}
 
 	private void unpackDataPackage(InputStream dataPackageIS, boolean bOverwrite)
 			throws IOException {
+		
 		File pbfile = new File(getPhoneBookDataFileAbsolutePath());
 		
 		if (pbfile.exists()&&(!bOverwrite)) {
@@ -129,11 +175,11 @@ public class DataPackageManager {
 	}
 	
 	public String getPhotoDirAbsolutePath() {
-		return DATAPACKAGE_DIR + PHOTO_DIR;
+		return DATAPACKAGE_DIR + PHOTO_DIR + File.separator;
 	}
 	
 	public String getMapDirAbsolutePath() {
-		return DATAPACKAGE_DIR + MAP_DIR;
+		return DATAPACKAGE_DIR + MAP_DIR + File.separator;
 	}
 	
 }

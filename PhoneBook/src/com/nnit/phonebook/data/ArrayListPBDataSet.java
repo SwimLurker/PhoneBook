@@ -24,11 +24,14 @@ public class ArrayListPBDataSet implements IPBDataSet{
 			case NAME:
 				result = filterByName((String)value);
 				break;
-			case MOBILE:
-				result = filterByMobile((String)value);
+			case PHONE:
+				result = filterByPhone((String)value);
 				break;
 			case DEPARTMENTNO:
 				result = filterByDepNo((String)value);
+				break;
+			case DEPARTMENT:
+				result = filterByDepartment((String)value);
 				break;
 			case MANAGER:
 				result = filterByManager((String)value);
@@ -68,11 +71,11 @@ public class ArrayListPBDataSet implements IPBDataSet{
 		return result;
 	}
 	
-	private ArrayList<PhoneBookItem> filterByMobile(String mobile){
+	private ArrayList<PhoneBookItem> filterByPhone(String phone){
 		ArrayList<PhoneBookItem> result = new ArrayList<PhoneBookItem>();
 		
 		for(PhoneBookItem item:data){
-			if(contains(item.getMobile(),mobile)){
+			if(contains(item.getPhone(),phone)){
 				result.add(item);
 			}
 		}
@@ -84,6 +87,17 @@ public class ArrayListPBDataSet implements IPBDataSet{
 		
 		for(PhoneBookItem item:data){
 			if(matchEquals(item.getDepartmentNo(), depNo)){
+				result.add(item);
+			}
+		}
+		return result;
+	}
+	
+	private ArrayList<PhoneBookItem> filterByDepartment(String department){
+		ArrayList<PhoneBookItem> result = new ArrayList<PhoneBookItem>();
+		
+		for(PhoneBookItem item:data){
+			if(matchEquals(item.getDepartment(), department)){
 				result.add(item);
 			}
 		}

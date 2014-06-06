@@ -60,7 +60,6 @@ public class JSONPBDataSource implements IPBDataSource {
 					String localName = obj.getString("LocalName");
 					String gender = obj.getString("Gender");
 					String phone = obj.getString("Phone");
-					String mobile = obj.getString("Mobile");
 					String departmentNo = obj.getString("DepartmentNO");
 					String department = obj.getString("Department");
 					String title = obj.getString("Title");
@@ -79,7 +78,6 @@ public class JSONPBDataSource implements IPBDataSource {
 						item.setGender(PhoneBookItem.GENDER.UNKNOWN);
 					}
 					item.setPhone(phone);
-					item.setMobile(mobile);
 					item.setDepartmentNo(departmentNo);
 					item.setDepartment(department);
 					item.setTitle(title);
