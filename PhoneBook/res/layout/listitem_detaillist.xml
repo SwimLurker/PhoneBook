@@ -4,8 +4,8 @@
     android:layout_height="match_parent" >
 	<ImageView 
 	    android:id="@+id/detailList_Photo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/list_photo_width"
+        android:layout_height="@dimen/list_photo_height"
         android:text="Photo"
         android:src="@drawable/photo"
         />
