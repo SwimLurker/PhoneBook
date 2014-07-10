@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">PhoneBook</string>
+    <string name="app_name">NNIT PhoneBook</string>
+    <string name="company">NNIT(Tianjin) Technology Co. Ltd.</string>
     <string name="menuitem_searchby">Search By...</string>
     <string name="menuitem_updatedatafile">Update Data File...</string>
     <string name="menuitem_about">About</string>
