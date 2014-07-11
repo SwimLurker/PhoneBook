@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.nnit.phonebook.data.DataPackageManager;
+import com.nnit.phonebook.data.FavoriteManager;
 import com.nnit.phonebook.data.IPBDataSet;
 import com.nnit.phonebook.data.JSONPBDataSource;
 import com.nnit.phonebook.data.PhoneBookField;
@@ -43,6 +44,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 public class MainActivity extends Activity {
 
@@ -56,8 +58,12 @@ public class MainActivity extends Activity {
 	private LayoutInflater inflater = null;
 	private MenuView menuListView = null;
 	private TextView titleTextView = null;
+	public static boolean showFavorite = true;
 	
 	private EditText updateDataPackageFilenameET = null;
+	private ToggleButton detailListBtn = null;
+	private ToggleButton favoriteListBtn = null;
+	
 	
 	public List<PhoneBookItem> getPhoneBookItems(){
 		return this.pbItems;
@@ -82,34 +88,39 @@ public class MainActivity extends Activity {
         
         inflater = LayoutInflater.from(this);
         
-        
-        /*
-    	View menuView = inflater.inflate(R.layout.more_menu, null);
-    	
-    	ListView lv = (ListView)menuView.findViewById(R.id.menu_more);
-     	String[] menuItems = {"Search By", "About"};
-     	ArrayAdapter menuAdapter = new ArrayAdapter(this, R.layout.menu_item, menuItems);
-     	lv.setAdapter(menuAdapter);
-     	
-    	menuWindow = new PopupWindow(menuView, 150, LayoutParams.WRAP_CONTENT);
-    	menuWindow.setBackgroundDrawable(new BitmapDrawable());
-    	menuWindow.setFocusable(true);
-    	menuWindow.setOutsideTouchable(true);
-//    	menuWindow.update();
- */
+     
         titleTextView = (TextView)findViewById(R.id.textview_title);
         
-        ImageButton detailListBtn = (ImageButton) findViewById(R.id.imagebtn_detaillist);
-        detailListBtn.setOnClickListener(new OnClickListener(){
+        favoriteListBtn = (ToggleButton) findViewById(R.id.imagebtn_favoritelist);
+        favoriteListBtn.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
+				setPhoneBookItems(getFavoriteList(fullPBDS.getPBItems()));
+				showFavorite = true;
+				updateLayout();
+				
+			}
+
+			      	
+        });
+        
+        
+        detailListBtn = (ToggleButton) findViewById(R.id.imagebtn_detaillist);
+        detailListBtn.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
 				isDetailList = true;
+				setPhoneBookItems(fullPBDS.getPBItems());
+				showFavorite = false;
 				updateLayout();
 			}
         });
         
+        
+        /*
         ImageButton briefListBtn = (ImageButton) findViewById(R.id.imagebtn_brieflist);
         briefListBtn.setOnClickListener(new OnClickListener(){
 
@@ -120,6 +131,7 @@ public class MainActivity extends Activity {
 				updateLayout();
 			}      	
         });
+        */
                
         ImageButton searchBtn = (ImageButton) findViewById(R.id.imagebtn_search);
         searchBtn.setOnClickListener(new OnClickListener(){
@@ -146,8 +158,6 @@ public class MainActivity extends Activity {
         });
              
              
-        briefListBtn.requestFocus();
-        
         if(briefList == null){
 			briefList = (ListView) findViewById(R.id.brief_list);
 		}
@@ -161,7 +171,21 @@ public class MainActivity extends Activity {
         	exp.printStackTrace();
         	Toast.makeText(this, "Get Phonebook Item Error:" + exp.getMessage(), Toast.LENGTH_LONG).show();
         }
-        titleTextView.setText("PhoneBook(" + pbItems.size() +")");
+        
+        if(FavoriteManager.getInstance().hasFavoriteList()){
+        	showFavorite = true;
+        	setPhoneBookItems(getFavoriteList(fullPBDS.getPBItems()));
+        	titleTextView.setText("Favorite(" + pbItems.size() +")");
+        	favoriteListBtn.setChecked(true);
+        	detailListBtn.setChecked(false);
+        }else{
+        	showFavorite = false;
+        	titleTextView.setText("All(" + pbItems.size() +")");
+        	favoriteListBtn.setChecked(false);
+        	detailListBtn.setChecked(true);
+        }
+        
+        
         briefList.setAdapter(new PhoneBookListAdapter(this, pbItems));     
         
     	detailList.setAdapter(new PhoneBookListAdapter(this, pbItems));
@@ -250,6 +274,17 @@ public class MainActivity extends Activity {
     	return false;
     }
     
+    private List<PhoneBookItem> getFavoriteList(List<PhoneBookItem> pbis) {
+		List<String> favoriteList = FavoriteManager.getInstance().getFavoriteInitialsList();
+		List<PhoneBookItem> result = new ArrayList<PhoneBookItem>();
+		for(PhoneBookItem pbi: pbis){
+			if(favoriteList.contains(pbi.getInitials().toUpperCase())){
+				result.add(pbi);
+			}
+		}
+		return result;
+	}
+    
     private void showSearchDialog() {
     	final View dialogView = inflater.inflate(R.layout.dialog_search, null);
     	
@@ -264,6 +299,7 @@ public class MainActivity extends Activity {
 					EditText initials_et = (EditText) dialogView.findViewById(R.id.search_initials_editview);
 					String initials = initials_et.getText().toString();
 					setPhoneBookItems(fullPBDS.filter(PhoneBookField.INITIALS, initials).getPBItems());
+					showFavorite = false;
 					updateLayout();
 				}
 			})
@@ -320,6 +356,7 @@ public class MainActivity extends Activity {
 							.filter(PhoneBookField.DEPARTMENT, depName)
 							.filter(PhoneBookField.MANAGER, manager)
 							.getPBItems());
+					showFavorite = false;
 					updateLayout();
 				}
 			})
@@ -388,7 +425,7 @@ public class MainActivity extends Activity {
 			        }
 					
 					PhotoManager.getInstance().loadPhotosInfo();
-					
+					showFavorite = false;
 					updateLayout();
 					
 					return true;
@@ -570,6 +607,20 @@ public class MainActivity extends Activity {
     		}
     		detailList.setVisibility(View.GONE);
     	}
+    	
+    	if(showFavorite){
+    		titleTextView.setText("Favorite(" + pbItems.size() +")");
+    		favoriteListBtn.setChecked(true);
+    		detailListBtn.setChecked(false);
+    	}else{
+    		titleTextView.setText("All(" + pbItems.size() +")");
+    		favoriteListBtn.setChecked(false);
+    		detailListBtn.setChecked(true);
+    	}
+    }
+    
+    public static void updateFavoriteList(){
+    	
     }
     
 }

@@ -5,8 +5,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
+import com.nnit.phonebook.DetailActivity;
 import com.nnit.phonebook.MainActivity;
 import com.nnit.phonebook.R;
+import com.nnit.phonebook.data.FavoriteManager;
 import com.nnit.phonebook.data.PhoneBookItem;
 
 
@@ -22,17 +24,23 @@ import com.nnit.phonebook.data.PhoneBookItem;
 
 import com.nnit.phonebook.data.PhotoManager;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class PhoneBookListAdapter extends BaseAdapter{
 	private List<PhoneBookItem> pbItems = null;
@@ -72,7 +80,52 @@ public class PhoneBookListAdapter extends BaseAdapter{
 			tv2.setText(pb == null? null: pb.getTitle() + "," + pb.getDepartmentNo() + " " + pb.getDepartment());
 			ImageView iv = (ImageView)convertView.findViewById(R.id.detailList_Photo);
 			
+			ImageButton removeFavoriteBtn = (ImageButton)convertView.findViewById(R.id.detaillist_removefromfavorite);
+			if(MainActivity.showFavorite){
+				removeFavoriteBtn.setVisibility(View.VISIBLE);
+			}else{
+				removeFavoriteBtn.setVisibility(View.GONE);
+			}
 			
+			final Context context = convertView.getContext();
+			final String targetInitials = pb.getInitials();
+			final ViewGroup vg = parent;
+			removeFavoriteBtn.setOnClickListener(new OnClickListener(){
+				
+				@Override
+				public void onClick(View arg0) {
+					Dialog dialog = new AlertDialog.Builder(context)
+		        	.setIcon(R.drawable.ic_launcher)
+		        	.setTitle("Do you want to remove it from your favorite list?")
+		        	.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							FavoriteManager.getInstance().removeFromFavoriteList(targetInitials);
+							if(!FavoriteManager.getInstance().persistFavoriteInitialsList()){
+								Toast.makeText(context, "Save favorite list info failed", Toast.LENGTH_SHORT).show();
+							}
+							for(int i = 0; i<pbItems.size(); i++){
+								PhoneBookItem pbi = pbItems.get(i);
+								if(pbi.getInitials().equalsIgnoreCase(targetInitials)){
+									pbItems.remove(i);
+									break;
+								}
+							}
+							PhoneBookListAdapter.this.notifyDataSetChanged();
+						}
+					})
+		        	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();							
+						}
+					})
+		        	.show();
+					
+				}
+				
+			});
 			
 			FileInputStream fis = null;
 			Resources resources = context.getResources();
@@ -119,6 +172,7 @@ public class PhoneBookListAdapter extends BaseAdapter{
 			TextView tv = (TextView)convertView.findViewById(R.id.briefList_Initial);
 			tv.setText(pb == null? null: pb.getInitials() + "(" + pb.getName() +")");
 		}
+		
 		return convertView;
 	}
 

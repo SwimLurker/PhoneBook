@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent" 
+    android:descendantFocusability="blocksDescendants">
 	<ImageView 
 	    android:id="@+id/detailList_Photo"
         android:layout_width="@dimen/list_photo_width"
         android:layout_height="@dimen/list_photo_height"
-        android:text="Photo"
-        android:src="@drawable/photo"
-        />
+        android:src="@drawable/photo" />
+    <TextView
+        android:id="@+id/detailList_Initials"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"  
+    	android:textSize="16sp"
+    	android:layout_toRightOf="@+id/detailList_Photo"
+    	android:layout_alignTop="@+id/detailList_Photo"   />
 
-	
-
-	    <TextView
-	        android:id="@+id/detailList_Initials"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:padding="10dp"  
-	    	android:textSize="16sp"
-	    	android:layout_toRightOf="@+id/detailList_Photo"
-	    	android:layout_alignTop="@+id/detailList_Photo"   />
-
-	    <TextView
-	        android:id="@+id/detailList_Name"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:padding="10dp"
-	        android:textSize="10sp"  
-	        android:layout_toRightOf="@+id/detailList_Photo"
-	        android:layout_alignBottom="@+id/detailList_Photo"/>
-
+    <TextView
+        android:id="@+id/detailList_Name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textSize="10sp"  
+        android:layout_toRightOf="@+id/detailList_Photo"
+        android:layout_alignBottom="@+id/detailList_Photo"/>
+	<ImageButton 
+	    android:id="@+id/detaillist_removefromfavorite"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentRight="true"
+	    android:layout_centerVertical="true"
+	    android:layout_marginRight="5dp"
+        android:background="@layout/selector_btn_remove"
+        android:focusable = "false" />
 	
 
 </RelativeLayout>

@@ -20,6 +20,6 @@
     <string name="datapackage_file">Data Package File:</string>
     <string name="browse">Browse...</string>
     <string name="maintitle">Phonebook</string>
-    <string name="detailtitle">Detail Info</string>
+    <string name="detailtitle"></string>
     <string name="maptitle">Seat Info</string>
 </resources>

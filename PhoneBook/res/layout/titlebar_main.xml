@@ -18,20 +18,24 @@
 	    android:layout_height="fill_parent"
 	    android:layout_alignParentRight="true"
 	    android:orientation="horizontal" >
-	     <ImageButton
-	        android:id="@+id/imagebtn_detaillist"
+	    <ToggleButton
+	        android:id="@+id/imagebtn_favoritelist"
 	        android:layout_width="wrap_content"
 	    	android:layout_height="wrap_content"
 	    	android:layout_gravity="center"
 	    	android:layout_marginRight="5dp"
-	        android:background="@layout/selector_btn_detaillist" />
-	    <ImageButton
-	        android:id="@+id/imagebtn_brieflist"
+	    	android:textOn=""
+            android:textOff=""
+	        android:background="@layout/selector_btn_favoritelist" />
+	    <ToggleButton
+	        android:id="@+id/imagebtn_detaillist"
         	android:layout_width="wrap_content"
 	    	android:layout_height="wrap_content"
 	    	android:layout_gravity="center"
 	    	android:layout_marginRight="5dp"
-        	android:background="@layout/selector_btn_brieflist" />
+	    	android:textOn=""
+            android:textOff=""
+        	android:background="@layout/selector_btn_detaillist" />
 	    <ImageButton
 	        android:id="@+id/imagebtn_search"
         	android:layout_width="wrap_content"

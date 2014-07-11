@@ -26,7 +26,7 @@ public class DataPackageManager {
 	public static final String PHOTO_DIR = "photos";
 	public static final String MAP_DIR = "maps";
 	public static final String BACKUP_DIR = "bak";
-	
+	public static final String FAVORITE_LIST_FILENAME = "favorite"; 
 	
 	private HashMap<String, String> photos = null;
 
@@ -69,8 +69,11 @@ public class DataPackageManager {
 					if(!sf.getName().equalsIgnoreCase(BACKUP_DIR)){
 						sf.renameTo(new File(DATAPACKAGE_DIR + BACKUP_DIR + File.separator + sf.getName()));
 					}
+					
 				}else if(sf.isFile()){
-					sf.renameTo(new File(DATAPACKAGE_DIR + BACKUP_DIR + File.separator + sf.getName()));
+					if(!sf.getName().equalsIgnoreCase(FAVORITE_LIST_FILENAME)){
+						sf.renameTo(new File(DATAPACKAGE_DIR + BACKUP_DIR + File.separator + sf.getName()));
+					}
 				}
 			}
 		}
@@ -102,7 +105,10 @@ public class DataPackageManager {
 			File[] files2 = f.listFiles();
 			for(File sf: files2){
 				if(sf.isDirectory()&&(sf.getName().equalsIgnoreCase(BACKUP_DIR))){
-						continue;
+					continue;
+				}
+				if(sf.isFile() && (sf.getName().equalsIgnoreCase(FAVORITE_LIST_FILENAME))){
+					continue;
 				}
 				delete(sf);
 			}
@@ -151,8 +157,13 @@ public class DataPackageManager {
 
 			file = new File(DATAPACKAGE_DIR + zipEntry.getName());
 			if (zipEntry.isDirectory()) {
-				file.mkdir();
+				file.mkdirs();
 			} else {
+				int index = zipEntry.getName().lastIndexOf("/");
+				if(index != -1){
+					File df = new File(DATAPACKAGE_DIR + zipEntry.getName().substring(0, index));
+					df.mkdirs();
+				}
 				file.createNewFile();
 				FileOutputStream fos = new FileOutputStream(file);
 				while ((count = zis.read(buf)) > 0) {
@@ -182,4 +193,7 @@ public class DataPackageManager {
 		return DATAPACKAGE_DIR + MAP_DIR + File.separator;
 	}
 	
+	public String getFavoriteListFileName(){
+		return DATAPACKAGE_DIR + FAVORITE_LIST_FILENAME;
+	}
 }

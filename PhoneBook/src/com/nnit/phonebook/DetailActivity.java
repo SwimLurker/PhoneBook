@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
+import com.nnit.phonebook.data.FavoriteManager;
 import com.nnit.phonebook.data.PhoneBookItem;
 import com.nnit.phonebook.data.PhotoManager;
 import com.nnit.phonebook.data.SeatMapInfo;
@@ -155,6 +157,44 @@ public class DetailActivity extends Activity{
 						    intent.setData(Uri.parse("tel:"+pbItem.getPhone()));
 						    startActivity(intent);
 						    dialog.dismiss();
+						}
+					})
+		        	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();							
+						}
+					})
+		        	.show();
+				
+			}
+			
+		});
+		
+		ImageButton smsBtn = (ImageButton) findViewById(R.id.imagebtn_sms);
+		smsBtn.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				Dialog dialog = new AlertDialog.Builder(DetailActivity.this)
+		        	.setIcon(R.drawable.ic_launcher)
+		        	.setTitle("Do you want to send the short message?")
+		        	.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Uri uri = Uri.parse("smsto:" + pbItem.getPhone());
+							Intent intent = new Intent(Intent.ACTION_SENDTO,uri);
+							
+							String enName = pbItem.getName();
+							StringTokenizer st =  new StringTokenizer(enName, " ");
+							if(st.hasMoreTokens()){
+								enName = st.nextToken();
+							}
+							
+							intent.putExtra("sms_body", "Hi," + enName + ",");
+
+							startActivity(intent);
 						}
 					})
 		        	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -400,6 +440,41 @@ public class DetailActivity extends Activity{
 					intent.putExtra(TARGET_INITIALS, initials);
 					intent.setAction("com.nnit.phonebook.MapActivity");
 					startActivity(intent);
+				}
+				
+			}
+			
+		});
+		
+		ImageButton addFavoriteBtn = (ImageButton) findViewById(R.id.imagebtn_addfavorite);
+		addFavoriteBtn.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				
+				if(FavoriteManager.getInstance().isInFavoriteList(pbItem.getInitials())){
+					Toast.makeText(DetailActivity.this, "The person is already in your favorite list", Toast.LENGTH_SHORT).show();
+				}else{
+				
+					Dialog dialog = new AlertDialog.Builder(DetailActivity.this)
+		        	.setIcon(R.drawable.ic_launcher)
+		        	.setTitle("Do you want to add the person to your favorite list?")
+		        	.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							FavoriteManager.getInstance().addToFavoriteList(pbItem.getInitials());
+							if(!FavoriteManager.getInstance().persistFavoriteInitialsList()){
+								Toast.makeText(DetailActivity.this, "Save favorite list info failed", Toast.LENGTH_SHORT).show();
+							}
+						}
+					})
+		        	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();							
+						}
+					})
+		        	.show();
 				}
 				
 			}
