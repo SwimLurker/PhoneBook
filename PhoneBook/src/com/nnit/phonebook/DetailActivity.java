@@ -461,8 +461,7 @@ public class DetailActivity extends Activity{
 		        	.setPositiveButton("OK",new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							FavoriteManager.getInstance().addToFavoriteList(pbItem.getInitials());
-							if(!FavoriteManager.getInstance().persistFavoriteInitialsList()){
+							if(!FavoriteManager.getInstance().addToFavoriteList(pbItem.getInitials())){
 								Toast.makeText(DetailActivity.this, "Save favorite list info failed", Toast.LENGTH_SHORT).show();
 							}
 						}

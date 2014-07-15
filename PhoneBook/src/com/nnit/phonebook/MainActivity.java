@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.nnit.phonebook.config.ConfigManager;
 import com.nnit.phonebook.data.DataPackageManager;
 import com.nnit.phonebook.data.FavoriteManager;
 import com.nnit.phonebook.data.IPBDataSet;
@@ -21,24 +22,34 @@ import com.nnit.phonebook.ui.OpenFileDialog;
 import com.nnit.phonebook.ui.PhoneBookListAdapter;
 
 import android.os.Bundle;
+import android.os.Looper;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -64,6 +75,13 @@ public class MainActivity extends Activity {
 	private ToggleButton detailListBtn = null;
 	private ToggleButton favoriteListBtn = null;
 	
+	private ViewPager viewPager;
+	private ArrayList<View> pageViews;
+	private ImageView[] imageViews;
+	
+	private CheckBox showGuidePageCB = null;
+	private RelativeLayout guidePageLayout;
+	private LinearLayout mainPageLayout;
 	
 	public List<PhoneBookItem> getPhoneBookItems(){
 		return this.pbItems;
@@ -76,19 +94,63 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-        
-        setContentView(R.layout.activity_main);
-        
+        //first prepare data
         unpackDataPackage(this);
         PhotoManager.getInstance().loadPhotosInfo();
         
         
-        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar_main);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        inflater = getLayoutInflater();
         
-        inflater = LayoutInflater.from(this);
-        
-     
+        //prepare guide pages
+        pageViews = new ArrayList<View>();
+        View guide1PageView = inflater.inflate(R.layout.pageview_guide1, null);
+        View guide2PageView = inflater.inflate(R.layout.pageview_guide2, null);
+		View guide3PageView = inflater.inflate(R.layout.pageview_guide3, null);
+		View guide4PageView = inflater.inflate(R.layout.pageview_guide4, null);
+		
+		pageViews.add(guide1PageView);
+		pageViews.add(guide2PageView);
+		pageViews.add(guide3PageView);
+		pageViews.add(guide4PageView);
+		
+		imageViews = new ImageView[pageViews.size()];
+		
+		ViewGroup main = (ViewGroup) inflater.inflate(R.layout.activity_main, null);
+		ViewGroup group = (ViewGroup) main.findViewById(R.id.viewGroup);
+		viewPager = (ViewPager) main.findViewById(R.id.guidePages);
+
+		for (int i = 0; i < pageViews.size(); i++) {
+			ImageView imageView = new ImageView(this);
+			imageView.setLayoutParams(new LayoutParams(20, 20));
+			imageView.setPadding(200, 0, 200, 0);
+			imageViews[i] = imageView;
+
+			if (i == 0) {
+				imageViews[i].setBackgroundResource(R.drawable.page_indicator_focused_1);
+			} else {
+				imageViews[i].setBackgroundResource(R.drawable.page_indicator);
+			}
+			group.addView(imageViews[i]);
+		}
+		viewPager.setAdapter(new GuidePageAdapter());
+		viewPager.setOnPageChangeListener(new GuidePageChangeListener());
+		
+		setContentView(main);
+		
+		
+		
+		ImageButton enterBtn= (ImageButton) guide4PageView.findViewById(R.id.guidepage_enterbtn);
+		enterBtn.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				showMainPage();
+			}
+			
+		});
+		showGuidePageCB = (CheckBox) guide4PageView.findViewById(R.id.guidepage_showguide);
+		
         titleTextView = (TextView)findViewById(R.id.textview_title);
         
         favoriteListBtn = (ToggleButton) findViewById(R.id.imagebtn_favoritelist);
@@ -219,9 +281,38 @@ public class MainActivity extends Activity {
         
         detailList.setVisibility(View.GONE);
         
+        
+        
+        guidePageLayout = (RelativeLayout)findViewById(R.id.guidePageLayout);
+		mainPageLayout =  (LinearLayout)findViewById(R.id.mainPageLayout);
+		
+		if(isShowGuidePage()){
+			guidePageLayout.setVisibility(View.VISIBLE);
+			mainPageLayout.setVisibility(View.GONE);
+		}else{
+			guidePageLayout.setVisibility(View.GONE);
+			mainPageLayout.setVisibility(View.VISIBLE);
+		}
+        
     }
     
-    private void unpackDataPackage(Context context) {
+    @Override
+	public void onBackPressed() {  	
+    	finish();
+    	//kill the process
+    	android.os.Process.killProcess(android.os.Process.myPid());
+    }
+    
+    private boolean isShowGuidePage() {
+    	String showGuidePage = ConfigManager.getInstance().getConfigure(ConfigManager.CONFIG_SHOWGUIDEPAGE);
+    	if(showGuidePage != null && (showGuidePage.equals("0")||showGuidePage.equalsIgnoreCase("false"))){
+    		return false;
+    	}
+		return true;
+	}
+    
+    
+	private void unpackDataPackage(Context context) {
 		try{
 			DataPackageManager.getInstance().unpackDataPackageFromAssets(context, false);
 		}catch(IOException e){
@@ -275,10 +366,9 @@ public class MainActivity extends Activity {
     }
     
     private List<PhoneBookItem> getFavoriteList(List<PhoneBookItem> pbis) {
-		List<String> favoriteList = FavoriteManager.getInstance().getFavoriteInitialsList();
 		List<PhoneBookItem> result = new ArrayList<PhoneBookItem>();
 		for(PhoneBookItem pbi: pbis){
-			if(favoriteList.contains(pbi.getInitials().toUpperCase())){
+			if(FavoriteManager.getInstance().isInFavoriteList(pbi.getInitials())){
 				result.add(pbi);
 			}
 		}
@@ -619,8 +709,92 @@ public class MainActivity extends Activity {
     	}
     }
     
-    public static void updateFavoriteList(){
+    private void showMainPage() {
     	
-    }
+    	ConfigManager.getInstance().saveConfigure(ConfigManager.CONFIG_SHOWGUIDEPAGE, showGuidePageCB.isChecked()?"1":"0");
+    	
+		guidePageLayout.setVisibility(View.GONE);
+		mainPageLayout.setVisibility(View.VISIBLE);
+	}
     
+    class GuidePageAdapter extends PagerAdapter {
+
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return pageViews.size();
+		}
+
+		@Override
+		public boolean isViewFromObject(View arg0, Object arg1) {
+			// TODO Auto-generated method stub
+			return arg0 == arg1;
+		}
+
+		@Override
+		public int getItemPosition(Object object) {
+			// TODO Auto-generated method stub
+			return super.getItemPosition(object);
+		}
+
+		@Override
+		public void destroyItem(View arg0, int arg1, Object arg2) {
+			// TODO Auto-generated method stub
+			((ViewPager) arg0).removeView(pageViews.get(arg1));
+		}
+
+		@Override
+		public Object instantiateItem(View arg0, int arg1) {
+			// TODO Auto-generated method stub
+			((ViewPager) arg0).addView(pageViews.get(arg1));
+			return pageViews.get(arg1);
+		}
+	}
+
+	class GuidePageChangeListener implements OnPageChangeListener {
+
+		boolean isScrolled = false;
+		
+		@Override
+		public void onPageScrollStateChanged(int status) {
+			switch (status){
+				case 1:
+					isScrolled = false;
+					break;
+				case 2:
+					isScrolled =true;
+					break;
+				case 0:
+					if(viewPager.getCurrentItem() == viewPager.getAdapter().getCount()-1 && !isScrolled){
+						showMainPage();
+					}
+					break;
+			}
+		}
+
+		@Override
+		public void onPageScrolled(int arg0, float arg1, int arg2) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onPageSelected(int index) {
+			if(index == 0){
+				imageViews[index].setBackgroundResource(R.drawable.page_indicator_focused_1);
+			}else if(index == 1){
+				imageViews[index].setBackgroundResource(R.drawable.page_indicator_focused_2);
+			}else if(index == 2){
+				imageViews[index].setBackgroundResource(R.drawable.page_indicator_focused_3);
+			}else{
+				imageViews[index].setBackgroundResource(R.drawable.page_indicator_focused_4);
+			}
+			for (int i = 0; i < imageViews.length; i++) {
+				if (index != i) {
+					imageViews[i].setBackgroundResource(R.drawable.page_indicator);
+				}
+			}
+		}
+
+	}
 }

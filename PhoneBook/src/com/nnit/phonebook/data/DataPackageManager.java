@@ -26,7 +26,7 @@ public class DataPackageManager {
 	public static final String PHOTO_DIR = "photos";
 	public static final String MAP_DIR = "maps";
 	public static final String BACKUP_DIR = "bak";
-	public static final String FAVORITE_LIST_FILENAME = "favorite"; 
+	public static final String PROPERTIES_FILENAME = "phonebook.properties";
 	
 	private HashMap<String, String> photos = null;
 
@@ -71,7 +71,7 @@ public class DataPackageManager {
 					}
 					
 				}else if(sf.isFile()){
-					if(!sf.getName().equalsIgnoreCase(FAVORITE_LIST_FILENAME)){
+					if(!sf.getName().equalsIgnoreCase(PROPERTIES_FILENAME)){
 						sf.renameTo(new File(DATAPACKAGE_DIR + BACKUP_DIR + File.separator + sf.getName()));
 					}
 				}
@@ -107,7 +107,7 @@ public class DataPackageManager {
 				if(sf.isDirectory()&&(sf.getName().equalsIgnoreCase(BACKUP_DIR))){
 					continue;
 				}
-				if(sf.isFile() && (sf.getName().equalsIgnoreCase(FAVORITE_LIST_FILENAME))){
+				if(sf.isFile() && (sf.getName().equalsIgnoreCase(PROPERTIES_FILENAME))){
 					continue;
 				}
 				delete(sf);
@@ -193,7 +193,7 @@ public class DataPackageManager {
 		return DATAPACKAGE_DIR + MAP_DIR + File.separator;
 	}
 	
-	public String getFavoriteListFileName(){
-		return DATAPACKAGE_DIR + FAVORITE_LIST_FILENAME;
+	public String getPropertiesFilename(){
+		return DATAPACKAGE_DIR + PROPERTIES_FILENAME;
 	}
 }

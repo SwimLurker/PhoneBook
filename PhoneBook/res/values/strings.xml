@@ -22,4 +22,5 @@
     <string name="maintitle">Phonebook</string>
     <string name="detailtitle"></string>
     <string name="maptitle">Seat Info</string>
+    <string name="show_guidepage">Show this guide page next time</string>
 </resources>

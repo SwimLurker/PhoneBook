@@ -100,8 +100,7 @@ public class PhoneBookListAdapter extends BaseAdapter{
 		        	.setPositiveButton("OK",new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							FavoriteManager.getInstance().removeFromFavoriteList(targetInitials);
-							if(!FavoriteManager.getInstance().persistFavoriteInitialsList()){
+							if(!FavoriteManager.getInstance().removeFromFavoriteList(targetInitials)){
 								Toast.makeText(context, "Save favorite list info failed", Toast.LENGTH_SHORT).show();
 							}
 							for(int i = 0; i<pbItems.size(); i++){
