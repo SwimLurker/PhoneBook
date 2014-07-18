@@ -17,11 +17,14 @@ import com.nnit.phonebook.data.JSONPBDataSource;
 import com.nnit.phonebook.data.PhoneBookField;
 import com.nnit.phonebook.data.PhoneBookItem;
 import com.nnit.phonebook.data.PhotoManager;
+import com.nnit.phonebook.ui.IFrameAnimationListener;
 import com.nnit.phonebook.ui.MenuView;
+import com.nnit.phonebook.ui.MyAnimationDrawable;
 import com.nnit.phonebook.ui.OpenFileDialog;
 import com.nnit.phonebook.ui.PhoneBookListAdapter;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -30,6 +33,14 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -40,6 +51,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -56,6 +72,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import android.graphics.drawable.BitmapDrawable;
 
 public class MainActivity extends Activity {
 
@@ -94,10 +111,9 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        //first prepare data
+        //first unpack data package if not
         unpackDataPackage(this);
-        PhotoManager.getInstance().loadPhotosInfo();
-        
+         
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         inflater = getLayoutInflater();
@@ -108,11 +124,13 @@ public class MainActivity extends Activity {
         View guide2PageView = inflater.inflate(R.layout.pageview_guide2, null);
 		View guide3PageView = inflater.inflate(R.layout.pageview_guide3, null);
 		View guide4PageView = inflater.inflate(R.layout.pageview_guide4, null);
+		View guide5PageView = inflater.inflate(R.layout.pageview_guide5, null);
 		
 		pageViews.add(guide1PageView);
 		pageViews.add(guide2PageView);
 		pageViews.add(guide3PageView);
 		pageViews.add(guide4PageView);
+		pageViews.add(guide5PageView);
 		
 		imageViews = new ImageView[pageViews.size()];
 		
@@ -139,17 +157,16 @@ public class MainActivity extends Activity {
 		setContentView(main);
 		
 		
-		
-		ImageButton enterBtn= (ImageButton) guide4PageView.findViewById(R.id.guidepage_enterbtn);
+		ImageButton enterBtn= (ImageButton) guide5PageView.findViewById(R.id.guidepage_enterbtn);
 		enterBtn.setOnClickListener(new OnClickListener(){
 
 			@Override
-			public void onClick(View v) {
-				showMainPage();
+			public void onClick(View v) {			
+				showMainPageWithAnimation();
+				
 			}
-			
 		});
-		showGuidePageCB = (CheckBox) guide4PageView.findViewById(R.id.guidepage_showguide);
+		showGuidePageCB = (CheckBox) guide5PageView.findViewById(R.id.guidepage_showguide);
 		
         titleTextView = (TextView)findViewById(R.id.textview_title);
         
@@ -513,8 +530,7 @@ public class MainActivity extends Activity {
 			        	Toast.makeText(MainActivity.this, "Reload Phone Book Data Error:" + exp.getMessage(), Toast.LENGTH_LONG).show();
 			        	return false;
 			        }
-					
-					PhotoManager.getInstance().loadPhotosInfo();
+					PhotoManager.getInstance().reload();
 					showFavorite = false;
 					updateLayout();
 					
@@ -709,12 +725,131 @@ public class MainActivity extends Activity {
     	}
     }
     
-    private void showMainPage() {
+    private void showMainPage(){
+    	ConfigManager.getInstance().saveConfigure(ConfigManager.CONFIG_SHOWGUIDEPAGE, showGuidePageCB.isChecked()?"1":"0");
+    	guidePageLayout.setVisibility(View.GONE);
+    	mainPageLayout.setVisibility(View.VISIBLE);
+    }
+    
+    private void showMainPageWithAnimation() {
+    	ConfigManager.getInstance().saveConfigure(ConfigManager.CONFIG_SHOWGUIDEPAGE, showGuidePageCB.isChecked()?"1":"0");
+    	
+    	
+    	Animation ani = new AlphaAnimation(1.0f, 0.0f);
+		ani.setDuration(1000);			
+		
+		guidePageLayout.setAnimation(ani);
+		
+		ani.setAnimationListener(new AnimationListener(){
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				guidePageLayout.setVisibility(View.GONE);
+		    	mainPageLayout.setVisibility(View.VISIBLE);
+				
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+				
+				
+			}
+			
+		});
+		
+		ani.startNow();
+    }
+    
+    private void showMainPageWithFrameAnimation(){
     	
     	ConfigManager.getInstance().saveConfigure(ConfigManager.CONFIG_SHOWGUIDEPAGE, showGuidePageCB.isChecked()?"1":"0");
     	
-		guidePageLayout.setVisibility(View.GONE);
-		mainPageLayout.setVisibility(View.VISIBLE);
+    	Bitmap screenShot = getScreenShot(MainActivity.this);
+    	
+    	final ImageView aniImageView = (ImageView)findViewById(R.id.animationImage);
+		
+		MyAnimationDrawable anim = new MyAnimationDrawable();
+		
+		int totalFrameCount = 20;
+		for(int i = 0;i<=totalFrameCount; i++){
+			anim.addFrame(getAnimationFrame(screenShot, i, totalFrameCount), 1000/totalFrameCount);
+		}
+		
+		anim.addFrameAnimationListener(new IFrameAnimationListener(){
+			
+			@Override
+			public void onAnimationStart() {
+				guidePageLayout.setVisibility(View.GONE);
+				aniImageView.setVisibility(View.VISIBLE);
+				Log.d("Animation", "animation start");
+			}
+			
+			@Override
+			public void onAnimationEnd() {
+				aniImageView.setVisibility(View.GONE);
+				mainPageLayout.setVisibility(View.VISIBLE);
+				Log.d("Animation", "animation end");
+			}
+			
+		});
+		anim.setOneShot(true);
+		aniImageView.setBackgroundDrawable(anim);
+		anim.start();
+		
+	}
+    
+    private Drawable getAnimationFrame(Bitmap sourceBitmap, int index, int totalFrameCount) {
+		Bitmap bitmap = getFrameBitmap(sourceBitmap, index, totalFrameCount);
+		if(bitmap != null){
+			return new BitmapDrawable(bitmap);
+		}
+		return null;
+	}
+
+	private Bitmap getFrameBitmap(Bitmap sourceBitmap, int index, int totalFrameCount) {
+		
+		int bitmapWidth = sourceBitmap.getWidth();
+		int bitmapHeight = sourceBitmap.getHeight();
+
+		Bitmap resultBMP = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.RGB_565);
+
+		Canvas canvas = new Canvas(resultBMP);
+		
+		Matrix m = new Matrix();
+		m.setScale((float)(totalFrameCount-index)/totalFrameCount, (float)(totalFrameCount -index)/totalFrameCount);
+		
+		Paint paint = new Paint();
+		
+		
+		canvas.drawBitmap(sourceBitmap, m, paint);
+		
+		return resultBMP;
+	}
+
+	private Bitmap getScreenShot(Activity activity) {
+		 
+		View decorView = activity.getWindow().getDecorView();
+		decorView.setDrawingCacheEnabled(true);
+		decorView.buildDrawingCache();
+		Bitmap bitmap = decorView.getDrawingCache();
+		
+		Rect rect = new Rect();
+		decorView.getWindowVisibleDisplayFrame(rect);
+		int statusBarHeight = rect.top;
+		int width = activity.getWindowManager().getDefaultDisplay().getWidth();
+		int height = activity.getWindowManager().getDefaultDisplay().getHeight();
+		
+		Bitmap result = Bitmap.createBitmap(bitmap, 0, statusBarHeight, width, height - statusBarHeight);
+		
+		decorView.destroyDrawingCache();
+		
+		return result;
 	}
     
     class GuidePageAdapter extends PagerAdapter {
@@ -786,8 +921,10 @@ public class MainActivity extends Activity {
 				imageViews[index].setBackgroundResource(R.drawable.page_indicator_focused_2);
 			}else if(index == 2){
 				imageViews[index].setBackgroundResource(R.drawable.page_indicator_focused_3);
-			}else{
+			}else if(index == 3){
 				imageViews[index].setBackgroundResource(R.drawable.page_indicator_focused_4);
+			}else{
+				imageViews[index].setBackgroundResource(R.drawable.page_indicator_focused_5);
 			}
 			for (int i = 0; i < imageViews.length; i++) {
 				if (index != i) {

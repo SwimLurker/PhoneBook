@@ -28,7 +28,7 @@
 	     <item name="android:windowTitleSize">56dip</item>
 	     <item name="android:windowContentOverlay">@android:color/transparent</item>
 	</style>
-	<style name="notitle">
+	<style name="NoTitle">
 	    <item name="android:windowNoTitle">true</item>
 	</style>
 	<style name="MyCheckBox" parent="@android:style/Widget.CompoundButton.CheckBox">

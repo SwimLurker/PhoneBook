@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/widget_width"
+    android:layout_height="@dimen/widget_height"
+    android:orientation="vertical"
+     >
+    <RelativeLayout 
+    	android:layout_width="@dimen/widget_card_width"
+    	android:layout_height="@dimen/widget_card_height"
+    	android:layout_marginLeft="@dimen/widget_backcard_leftmargin"
+    	android:layout_marginTop="@dimen/widget_backcard_topmargin" >
+	    <ImageView
+	        android:id="@+id/widget_photo_back"
+	        android:layout_width="@dimen/widget_photo_width"
+	        android:layout_height="@dimen/widget_photo_height"
+	        android:layout_marginTop="@dimen/widget_photo_topmargin"
+	        android:layout_marginLeft="@dimen/widget_photo_leftmargin"
+	        android:scaleType="fitXY"
+	        android:src="@drawable/photo" />
+ 		<ImageView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/contactcard_bk" />
+	    
+	   
+	    <LinearLayout 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical"
+	        android:layout_toRightOf="@+id/widget_photo_back" >
+	         <TextView
+		        android:id="@+id/widget_line1_back"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:paddingTop="@dimen/widget_line1_toppadding"
+		        android:paddingLeft="@dimen/widget_line1_leftpadding"
+		        android:textSize="@dimen/widget_line1_textsize"
+		        android:textColor="@color/widget_textcolor"
+		        android:textStyle="bold"
+		    	android:layout_alignTop="@+id/widget_photo_back"   
+		    	android:text=""/>
+	
+		    <TextView
+		        android:id="@+id/widget_line2_back"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:paddingTop="@dimen/widget_line2_toppadding"
+		        android:paddingLeft="@dimen/widget_line2_leftpadding"
+		        android:textSize="@dimen/widget_line2_textsize" 
+		        android:textColor="@color/widget_textcolor"
+		        android:text=""/> 
+		        
+		    <TextView
+		        android:id="@+id/widget_line3_back"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:paddingTop="@dimen/widget_line3_toppadding"
+		        android:paddingLeft="@dimen/widget_line3_leftpadding"
+		        android:textSize="@dimen/widget_line3_textsize"  
+		        android:textColor="@color/widget_textcolor"
+		        android:text=""/> 
+	    </LinearLayout>
+	    <LinearLayout 
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal"
+	        android:layout_below="@+id/widget_photo_back" >
+		    <LinearLayout 
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="horizontal" 
+		        android:layout_weight="1.0">
+		    	<TextView
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:paddingTop="@dimen/widget_line4_lable_toppadding"
+			        android:paddingLeft="@dimen/widget_line4_lable_leftpadding"
+			        android:textSize="@dimen/widget_line4_lable_textsize"  
+			        android:textColor="@color/widget_lablecolor"
+			        android:text="Tel:" /> 
+		        <TextView
+			        android:id="@+id/widget_line4_back"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:paddingTop="@dimen/widget_line4_toppadding"
+			        android:paddingLeft="@dimen/widget_line4_leftpadding"
+			        android:textSize="@dimen/widget_line4_textsize"
+			        android:textColor="@color/widget_textcolor"
+			        android:text="" />
+		   </LinearLayout>
+		   <LinearLayout 
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="horizontal" 
+		        android:layout_weight="1.0"> 
+		        <TextView
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:paddingTop="@dimen/widget_line5_lable_toppadding"
+			        android:paddingLeft="@dimen/widget_line5_lable_leftpadding"
+			        android:textSize="@dimen/widget_line5_lable_textsize"  
+			        android:textColor="@color/widget_lablecolor"
+			        android:text="Mail:" /> 
+			    <TextView
+			        android:id="@+id/widget_line5_back"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:paddingTop="@dimen/widget_line5_toppadding"
+			        android:paddingLeft="@dimen/widget_line5_leftpadding"
+			        android:textSize="@dimen/widget_line5_textsize"
+			        android:textColor="@color/widget_textcolor"
+			        android:text="" />
+			</LinearLayout>
+	    </LinearLayout>
+	</RelativeLayout>
+	<RelativeLayout 
+    	android:layout_width="@dimen/widget_card_width"
+    	android:layout_height="@dimen/widget_card_height"
+    	android:layoutAnimation="@anim/widget_layout_animation">
+	    <ImageView
+	        android:id="@+id/widget_photo"
+	        android:layout_width="@dimen/widget_photo_width"
+	        android:layout_height="@dimen/widget_photo_height"
+	        android:layout_marginTop="@dimen/widget_photo_topmargin"
+	        android:layout_marginLeft="@dimen/widget_photo_leftmargin"
+	        android:scaleType="fitXY"
+	        android:src="@drawable/photo" />
+ 		<ImageView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/contactcard_bk" />
+	    
+	   
+	    <LinearLayout 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical"
+	        android:layout_toRightOf="@+id/widget_photo" >
+	         <TextView
+		        android:id="@+id/widget_line1"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:paddingTop="@dimen/widget_line1_toppadding"
+		        android:paddingLeft="@dimen/widget_line1_leftpadding"
+		        android:textSize="@dimen/widget_line1_textsize"
+		        android:textColor="@color/widget_textcolor"
+		        android:textStyle="bold"
+		    	android:layout_alignTop="@+id/widget_photo"   
+		    	android:text=""/>
+	
+		    <TextView
+		        android:id="@+id/widget_line2"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:paddingTop="@dimen/widget_line2_toppadding"
+		        android:paddingLeft="@dimen/widget_line2_leftpadding"
+		        android:textSize="@dimen/widget_line2_textsize"
+		        android:textColor="@color/widget_textcolor"
+		        android:text=""/> 
+		        
+		    <TextView
+		        android:id="@+id/widget_line3"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		       android:paddingTop="@dimen/widget_line3_toppadding"
+		        android:paddingLeft="@dimen/widget_line3_leftpadding"
+		        android:textSize="@dimen/widget_line3_textsize"
+		        android:textColor="@color/widget_textcolor"
+		        android:text=""/> 
+	    </LinearLayout>
+	    <LinearLayout 
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal"
+	        android:layout_below="@+id/widget_photo" >
+		    <LinearLayout 
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="horizontal" 
+		        android:layout_weight="1.0">
+		    	<TextView
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:paddingTop="@dimen/widget_line4_lable_toppadding"
+			        android:paddingLeft="@dimen/widget_line4_lable_leftpadding"
+			        android:textSize="@dimen/widget_line4_lable_textsize"  
+			        android:textColor="@color/widget_lablecolor"
+			        android:text="@string/widget_line4_lable_text" /> 
+		        <TextView
+			        android:id="@+id/widget_line4"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:paddingTop="@dimen/widget_line4_toppadding"
+			        android:paddingLeft="@dimen/widget_line4_leftpadding"
+			        android:textSize="@dimen/widget_line4_textsize"
+			        android:textColor="@color/widget_textcolor"
+			        android:text="" />
+		   </LinearLayout>
+		   <LinearLayout 
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="horizontal" 
+		        android:layout_weight="1.0"> 
+		        <TextView
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			         android:paddingTop="@dimen/widget_line5_lable_toppadding"
+			        android:paddingLeft="@dimen/widget_line5_lable_leftpadding"
+			        android:textSize="@dimen/widget_line5_lable_textsize"  
+			        android:textColor="@color/widget_lablecolor"
+			        android:text="@string/widget_line5_lable_text" /> 
+			    <TextView
+			        android:id="@+id/widget_line5"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:paddingTop="@dimen/widget_line5_toppadding"
+			        android:paddingLeft="@dimen/widget_line5_leftpadding"
+			        android:textSize="@dimen/widget_line5_textsize"
+			        android:textColor="@color/widget_textcolor"
+			        android:text="" />
+			</LinearLayout>
+	    </LinearLayout>     
+	</RelativeLayout>
+	<ImageButton
+	        android:id="@+id/widget_nextbtn"
+        	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:layout_alignParentRight="true"
+	    	android:layout_marginTop="@dimen/widget_btn_topmargin"
+	    	android:layout_marginLeft="@dimen/widget_btn_leftmargin"
+        	android:background="@layout/selector_btn_next" />
+</RelativeLayout>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    >
+    <ImageView 
+     	android:id="@+id/guidepage_image5"
+     	android:layout_width="match_parent"
+     	android:layout_height="match_parent"
+     	android:background="@drawable/guide_image5"/>  
+    <ImageButton 
+	    android:id="@+id/guidepage_enterbtn"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_centerInParent="true"
+	    android:background="@layout/selector_btn_enter"
+	    />
+    <LinearLayout 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="@dimen/guide_page_bottommargin">
+         <CheckBox
+	        android:id="@+id/guidepage_showguide"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:clickable="true"
+	        android:checked="true"
+	        style="@style/MyCheckBox" />
+         <TextView 
+            android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/show_guidepage"
+		    android:textColor="#FFFFFF"
+		    android:textSize="@dimen/show_guidepage_text_size"
+		    android:textStyle="normal"
+	        />
+    </LinearLayout>
+   
+    
+</RelativeLayout>

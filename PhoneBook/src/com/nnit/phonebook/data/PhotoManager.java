@@ -14,6 +14,9 @@ import android.os.Environment;
 public class PhotoManager {
 	private static PhotoManager _instance = null;
 	
+	private boolean bLoaded = false;
+	private static Object lock = new Object();
+	
 	private HashMap<String, String> photos = new HashMap<String, String>();
 	
 	private PhotoManager(){
@@ -28,15 +31,29 @@ public class PhotoManager {
 	}
 	
 	public String getPhotoFilenameByInitials(String initials){
-		if(photos.containsKey(initials)){
-			return photos.get(initials);
+		if(!bLoaded){
+			loadPhotosInfo();
+		}
+		if(photos.containsKey(initials.toLowerCase())){
+			return photos.get(initials.toLowerCase());
 		}
 		return null;
 	}
 	
-	public boolean loadPhotosInfo(){
-		return loadPhotosInfo(new File(DataPackageManager.getInstance().getPhotoDirAbsolutePath()));
+	public void reload(){
+		synchronized(lock){
+			photos.clear();
+			bLoaded = false;
+		}
 	}
+	
+	protected boolean loadPhotosInfo(){
+		synchronized(lock){			
+			bLoaded =  loadPhotosInfo(new File(DataPackageManager.getInstance().getPhotoDirAbsolutePath()));
+		}
+		return bLoaded;
+	}
+	
 	
 	private boolean loadPhotosInfo(File rootDir) {
 		if(!rootDir.exists()||(!rootDir.isDirectory())){
@@ -54,6 +71,7 @@ public class PhotoManager {
 				}
 			}	
 		}
+		
 		return true;
 	}
 	

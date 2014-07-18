@@ -15,6 +15,7 @@ public class ConfigManager {
 	
 	private boolean bLoaded = false;
 	private Properties props = null;
+	private static Object lock = new Object();
 	
 	private ConfigManager(){
 		 props = new Properties();
@@ -28,57 +29,59 @@ public class ConfigManager {
 	}
 
 	protected void loadConfiguration(){
-		
-		FileInputStream fis = null;
-		String filename = DataPackageManager.getInstance().getPropertiesFilename();
-		try{
-			File f = new File(filename);
-			if(f.exists() && f.isFile()){
-				 fis = new FileInputStream(f);
-				 props.load(fis);			 
-			}
-		}catch(Exception exp){
-			exp.printStackTrace();
-		}finally{
-			if(fis != null){
-				try {
-					fis.close();
-				} catch (IOException e) {
+		synchronized(lock){
+			FileInputStream fis = null;
+			String filename = DataPackageManager.getInstance().getPropertiesFilename();
+			try{
+				File f = new File(filename);
+				if(f.exists() && f.isFile()){
+					 fis = new FileInputStream(f);
+					 props.load(fis);			 
 				}
-				fis = null;
+			}catch(Exception exp){
+				exp.printStackTrace();
+			}finally{
+				if(fis != null){
+					try {
+						fis.close();
+					} catch (IOException e) {
+					}
+					fis = null;
+				}
 			}
+			bLoaded = true;
 		}
-		bLoaded = true;
 	}
 	
 	
 	protected boolean saveConfiguration(){
-		FileOutputStream fos = null;
-		String filename = DataPackageManager.getInstance().getPropertiesFilename();
-		try{
-			File f = new File(filename);
-			if(f.exists() && f.isFile()){
-				f.delete();
-			}
-			f.createNewFile();
-			
-			fos = new FileOutputStream(f);
-			props.store(fos, null);
-			fos.flush();
-			return true;
-		}catch(Exception exp){
-			exp.printStackTrace();
-			return false;
-		}finally{
-			if(fos != null){
-				try {
-					fos.close();
-				} catch (IOException e) {
+		synchronized(lock){
+			FileOutputStream fos = null;
+			String filename = DataPackageManager.getInstance().getPropertiesFilename();
+			try{
+				File f = new File(filename);
+				if(f.exists() && f.isFile()){
+					f.delete();
 				}
-				fos = null;
+				f.createNewFile();
+				
+				fos = new FileOutputStream(f);
+				props.store(fos, null);
+				fos.flush();
+				return true;
+			}catch(Exception exp){
+				exp.printStackTrace();
+				return false;
+			}finally{
+				if(fos != null){
+					try {
+						fos.close();
+					} catch (IOException e) {
+					}
+					fos = null;
+				}
 			}
 		}
-		
 	}
 	
 	public String getConfigure(String key){
@@ -89,7 +92,19 @@ public class ConfigManager {
 	}
 	
 	public boolean saveConfigure(String key, String value){
-		props.setProperty(key, value);
+		if(!bLoaded){
+			loadConfiguration();
+		}
+		synchronized(lock){
+			props.setProperty(key, value);
+		}
 		return saveConfiguration();
+	}
+
+	public void reloadConfigures() {
+		synchronized(lock){
+			props.clear();
+			bLoaded = false;
+		}
 	}
 }

@@ -28,10 +28,8 @@ public class DataPackageManager {
 	public static final String BACKUP_DIR = "bak";
 	public static final String PROPERTIES_FILENAME = "phonebook.properties";
 	
-	private HashMap<String, String> photos = null;
-
+	
 	private DataPackageManager() {
-		photos = new HashMap<String, String>();
 	}
 
 	public static DataPackageManager getInstance() {

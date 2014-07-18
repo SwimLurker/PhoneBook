@@ -12,34 +12,58 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/PhoneBookList" >
+        >
         <activity
             android:name="com.nnit.phonebook.SplashActivity"
             android:label="@string/app_name"
-            android:theme="@style/notitle" >
+            android:theme="@style/NoTitle" 
+            android:configChanges="orientation|keyboard">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.nnit.phonebook.MainActivity" >
+            android:name="com.nnit.phonebook.MainActivity" 
+            android:configChanges="orientation|keyboard" >
             <action android:name="com.nnit.phonebook.MainActivity" />
         </activity>
         <activity
-            android:name="com.nnit.phonebook.DetailActivity" >
+            android:name="com.nnit.phonebook.DetailActivity"
+            android:theme="@style/PhoneBookList" 
+            android:configChanges="orientation|keyboard">
             <intent-filter>
                 <action android:name="com.nnit.phonebook.DetailActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.nnit.phonebook.MapActivity" >
+            android:name="com.nnit.phonebook.MapActivity" 
+            android:theme="@style/PhoneBookList" 
+            android:configChanges="orientation|keyboard">
             <intent-filter>
                 <action android:name="com.nnit.phonebook.MapActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <receiver android:name="com.nnit.phonebook.widget.NNITPhoneBookWidgetProvider">
+            <intent-filter >
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.nnit.phonebook.widget.SHOW_NEXT_PERSON" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@layout/nnit_phonebook_widget_info"/>
+        </receiver>
+        
+       
+        <service android:name="com.nnit.phonebook.service.UpdateWidgetService">
+            <intent-filter >
+                <action android:name="com.nnit.phonebook.widget.UPDATE_ALL" />
+            </intent-filter>
+        </service>
+      
     </application>
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.SEND_SMS"/>
