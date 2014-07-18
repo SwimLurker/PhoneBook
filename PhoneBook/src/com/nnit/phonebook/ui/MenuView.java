@@ -36,7 +36,9 @@ public class MenuView extends View{
 	
 	public final static int MENU_UPDATEDATAFILE = 1;
 	
-	public final static int MENU_ABOUT = 2;
+	public final static int MENU_SETTINGS = 2;
+	
+	public final static int MENU_ABOUT = 3;
 	
 	public static float SET_TYPE_TEXT_SIZE = 16;
 	

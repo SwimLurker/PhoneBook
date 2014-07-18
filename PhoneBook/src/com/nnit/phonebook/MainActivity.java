@@ -24,9 +24,6 @@ import com.nnit.phonebook.ui.OpenFileDialog;
 import com.nnit.phonebook.ui.PhoneBookListAdapter;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -35,11 +32,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -54,8 +49,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationSet;
-import android.view.animation.ScaleAnimation;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -596,6 +589,37 @@ public class MainActivity extends Activity {
     }
     */
     
+    private void showSettingsDialog() {
+    	final View dialogView = inflater.inflate(R.layout.dialog_settings, null);
+    	
+    	CheckBox showGuideCB = (CheckBox)dialogView.findViewById(R.id.settings_showguide);
+    	
+    	showGuideCB.setChecked(isShowGuidePage());
+    	
+    	
+    	Dialog dialog = new AlertDialog.Builder(this)
+        	.setIcon(R.drawable.ic_launcher)
+        	.setTitle("Settings")
+        	.setView(dialogView)
+        	.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO Auto-generated method stub
+					CheckBox showGuideCB = (CheckBox)dialogView.findViewById(R.id.settings_showguide);
+					ConfigManager.getInstance().saveConfigure(ConfigManager.CONFIG_SHOWGUIDEPAGE, showGuideCB.isChecked()?"1":"0");
+				}
+			})
+        	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					
+				}
+			})
+        	.show();
+    }
+    
     private void showAboutDialog() {
     	final View dialogView = inflater.inflate(R.layout.dialog_about, null);
     	Dialog dialog = new AlertDialog.Builder(this)
@@ -647,6 +671,7 @@ public class MainActivity extends Activity {
     	menuListView.clear();
     	menuListView.add(MenuView.MENU_SEARCHBY, getString(R.string.menuitem_searchby));
     	menuListView.add(MenuView.MENU_UPDATEDATAFILE, getString(R.string.menuitem_updatedatafile));
+    	menuListView.add(MenuView.MENU_SETTINGS, getString(R.string.menuitem_settings));
     	menuListView.add(MenuView.MENU_ABOUT, getString(R.string.menuitem_about));
     	
     }
@@ -663,6 +688,9 @@ public class MainActivity extends Activity {
 					break;
 				case MenuView.MENU_UPDATEDATAFILE:
 					showUpdateDataFileDialog();
+					break;
+				case MenuView.MENU_SETTINGS:
+					showSettingsDialog();
 					break;
 				case MenuView.MENU_ABOUT:
 					showAboutDialog();
