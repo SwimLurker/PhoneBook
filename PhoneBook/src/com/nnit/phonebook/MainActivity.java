@@ -30,6 +30,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -93,6 +94,9 @@ public class MainActivity extends Activity {
 	private RelativeLayout guidePageLayout;
 	private LinearLayout mainPageLayout;
 	
+	private Resources resources = null;
+	
+	
 	public List<PhoneBookItem> getPhoneBookItems(){
 		return this.pbItems;
 	}
@@ -104,6 +108,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        resources = getResources();
         //first unpack data package if not
         unpackDataPackage(this);
          
@@ -241,18 +246,18 @@ public class MainActivity extends Activity {
         	pbItems = getPhoneBook(); 	
         }catch(Exception exp){
         	exp.printStackTrace();
-        	Toast.makeText(this, "Get Phonebook Item Error:" + exp.getMessage(), Toast.LENGTH_LONG).show();
+        	Toast.makeText(this, resources.getString(R.string.error_load_phonebook) + exp.getMessage(), Toast.LENGTH_LONG).show();
         }
         
         if(FavoriteManager.getInstance().hasFavoriteList()){
         	showFavorite = true;
         	setPhoneBookItems(getFavoriteList(fullPBDS.getPBItems()));
-        	titleTextView.setText("Favorite(" + pbItems.size() +")");
+        	titleTextView.setText(resources.getString(R.string.title_favoritelist) + "(" + pbItems.size() +")");
         	favoriteListBtn.setChecked(true);
         	detailListBtn.setChecked(false);
         }else{
         	showFavorite = false;
-        	titleTextView.setText("All(" + pbItems.size() +")");
+        	titleTextView.setText(resources.getString(R.string.title_phonebooklist) + "(" + pbItems.size() +")");
         	favoriteListBtn.setChecked(false);
         	detailListBtn.setChecked(true);
         }
@@ -390,9 +395,9 @@ public class MainActivity extends Activity {
     	
     	Dialog dialog = new AlertDialog.Builder(this)
         	.setIcon(R.drawable.ic_launcher)
-        	.setTitle("Please input Initials")
+        	.setTitle(resources.getString(R.string.title_searchdialog))
         	.setView(dialogView)
-        	.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+        	.setPositiveButton(resources.getString(R.string.lable_okbtn),new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					// TODO Auto-generated method stub
@@ -403,7 +408,7 @@ public class MainActivity extends Activity {
 					updateLayout();
 				}
 			})
-        	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        	.setNegativeButton(resources.getString(R.string.lable_cancelbtn), new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -419,7 +424,7 @@ public class MainActivity extends Activity {
     	
     	Spinner depNameSpinner = (Spinner)dialogView.findViewById(R.id.searchby_depName);
     	List<String> depNameList = new ArrayList<String>();
-    	depNameList.add("Please Select ...");
+    	depNameList.add(resources.getString(R.string.lable_spinner_select));
     	depNameList.addAll(getAllDeportMents());
 		
 		ArrayAdapter<String> depNameAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, depNameList);
@@ -429,9 +434,9 @@ public class MainActivity extends Activity {
     	
     	Dialog dialog = new AlertDialog.Builder(this)
         	.setIcon(R.drawable.ic_launcher)
-        	.setTitle("Please input search criteria:")
+        	.setTitle(resources.getString(R.string.title_searchbydialog))
         	.setView(dialogView)
-        	.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+        	.setPositiveButton(resources.getString(R.string.lable_okbtn),new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					// TODO Auto-generated method stub
@@ -460,7 +465,7 @@ public class MainActivity extends Activity {
 					updateLayout();
 				}
 			})
-        	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        	.setNegativeButton(resources.getString(R.string.lable_cancelbtn), new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -490,9 +495,9 @@ public class MainActivity extends Activity {
     	
     	Dialog dialog = new AlertDialog.Builder(this)
         	.setIcon(R.drawable.ic_launcher)
-        	.setTitle("Update Data Package")
+        	.setTitle(resources.getString(R.string.title_updatepackagedialog))
         	.setView(dialogView)
-        	.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        	.setPositiveButton(resources.getString(R.string.lable_okbtn), new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -500,63 +505,23 @@ public class MainActivity extends Activity {
 					
 					
 					if(dataPackagePath.equals("")){
-						Toast.makeText(MainActivity.this, "Please select data package file!", Toast.LENGTH_SHORT).show();
+						Toast.makeText(MainActivity.this, resources.getString(R.string.error_select_package), Toast.LENGTH_SHORT).show();
 						return;
 					}
 					
 					
 					if((!dataPackagePath.equals("")) && ((!updateDataPackageFile(dataPackagePath)) || (!reloadData()))){
-							Toast.makeText(MainActivity.this, "Phonebook data file update fail", Toast.LENGTH_SHORT).show();
+							Toast.makeText(MainActivity.this, resources.getString(R.string.error_update_package), Toast.LENGTH_SHORT).show();
 							return;
 					}
 					
-					Toast.makeText(MainActivity.this, "Update data package succeed", Toast.LENGTH_SHORT).show();
+					Toast.makeText(MainActivity.this, resources.getString(R.string.info_update_package), Toast.LENGTH_SHORT).show();
 					dialog.dismiss();
 					
 				}
 
-				private boolean reloadData() {
-					try{
-			        	pbItems = getPhoneBook(); 	
-			        }catch(Exception exp){
-			        	exp.printStackTrace();
-			        	Toast.makeText(MainActivity.this, "Reload Phone Book Data Error:" + exp.getMessage(), Toast.LENGTH_LONG).show();
-			        	return false;
-			        }
-					PhotoManager.getInstance().reload();
-					showFavorite = false;
-					updateLayout();
-					
-					return true;
-				}
-				
-				private boolean updateDataPackageFile(String packageFileName) {
-					// TODO Auto-generated method stub
-					File f = new File(packageFileName);
-					if((!f.exists())||(!f.isFile())){
-						return false;
-					}
-					
-					FileInputStream fis = null;
-					try{
-						fis = new FileInputStream(f);
-						DataPackageManager.getInstance().unpackDataPackageFromInputStream(fis, true);
-						return true;
-					}catch(Exception exp){
-						Log.e("DataPackageManager", "Update data package file:" + packageFileName +" failed");
-						return false;
-					}finally{
-						if(fis != null){
-							try {
-								fis.close();
-							} catch (IOException e) {
-							}
-							fis = null;
-						}
-					}
-				}
 			})
-			.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			.setNegativeButton(resources.getString(R.string.lable_cancelbtn), new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -588,7 +553,7 @@ public class MainActivity extends Activity {
     	
     }
     */
-    
+   
     private void showSettingsDialog() {
     	final View dialogView = inflater.inflate(R.layout.dialog_settings, null);
     	
@@ -599,9 +564,9 @@ public class MainActivity extends Activity {
     	
     	Dialog dialog = new AlertDialog.Builder(this)
         	.setIcon(R.drawable.ic_launcher)
-        	.setTitle("Settings")
+        	.setTitle(resources.getString(R.string.title_settingsdialog))
         	.setView(dialogView)
-        	.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+        	.setPositiveButton(resources.getString(R.string.lable_okbtn),new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					// TODO Auto-generated method stub
@@ -609,7 +574,7 @@ public class MainActivity extends Activity {
 					ConfigManager.getInstance().saveConfigure(ConfigManager.CONFIG_SHOWGUIDEPAGE, showGuideCB.isChecked()?"1":"0");
 				}
 			})
-        	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        	.setNegativeButton(resources.getString(R.string.lable_cancelbtn), new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -624,9 +589,9 @@ public class MainActivity extends Activity {
     	final View dialogView = inflater.inflate(R.layout.dialog_about, null);
     	Dialog dialog = new AlertDialog.Builder(this)
         	.setIcon(R.drawable.ic_launcher)
-        	.setTitle("About")
+        	.setTitle(resources.getString(R.string.title_aboutdialog))
         	.setView(dialogView)
-        	.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+        	.setNegativeButton(resources.getString(R.string.lable_closebtn), new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -703,6 +668,46 @@ public class MainActivity extends Activity {
     	
     };
     
+    private boolean reloadData() {
+		try{
+        	pbItems = getPhoneBook(); 	
+        }catch(Exception exp){
+        	exp.printStackTrace();
+        	Toast.makeText(MainActivity.this, resources.getString(R.string.error_reload_data) + exp.getMessage(), Toast.LENGTH_LONG).show();
+        	return false;
+        }
+		PhotoManager.getInstance().reload();
+		showFavorite = false;
+		updateLayout();
+		
+		return true;
+	}
+	
+	private boolean updateDataPackageFile(String packageFileName) {
+		// TODO Auto-generated method stub
+		File f = new File(packageFileName);
+		if((!f.exists())||(!f.isFile())){
+			return false;
+		}
+		
+		FileInputStream fis = null;
+		try{
+			fis = new FileInputStream(f);
+			DataPackageManager.getInstance().unpackDataPackageFromInputStream(fis, true);
+			return true;
+		}catch(Exception exp){
+			Log.e("DataPackageManager", "Update data package file:" + packageFileName +" failed");
+			return false;
+		}finally{
+			if(fis != null){
+				try {
+					fis.close();
+				} catch (IOException e) {
+				}
+				fis = null;
+			}
+		}
+	}
     
     private List<PhoneBookItem> getPhoneBook() throws Exception{
     	JSONPBDataSource ds =  new JSONPBDataSource();
@@ -716,7 +721,7 @@ public class MainActivity extends Activity {
     }
     
     private void updateLayout(){
-    	titleTextView.setText("PhoneBook(" + pbItems.size() +")");
+    	//titleTextView.setText("PhoneBook(" + pbItems.size() +")");
     	
     	if(isDetailList){
     		if(detailList == null){
@@ -743,11 +748,11 @@ public class MainActivity extends Activity {
     	}
     	
     	if(showFavorite){
-    		titleTextView.setText("Favorite(" + pbItems.size() +")");
+    		titleTextView.setText(resources.getString(R.string.title_favoritelist) + "(" + pbItems.size() +")");
     		favoriteListBtn.setChecked(true);
     		detailListBtn.setChecked(false);
     	}else{
-    		titleTextView.setText("All(" + pbItems.size() +")");
+    		titleTextView.setText(resources.getString(R.string.title_phonebooklist) + "(" + pbItems.size() +")");
     		favoriteListBtn.setChecked(false);
     		detailListBtn.setChecked(true);
     	}

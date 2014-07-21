@@ -70,6 +70,8 @@ public class PhoneBookListAdapter extends BaseAdapter{
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		PhoneBookItem pb = pbItems.get(position);
+		final Resources resources = context.getResources();
+		
 		if (MainActivity.isDetailList){
 			if(convertView == null){
 				convertView = mInflater.inflate(R.layout.listitem_detaillist, parent, false);								
@@ -96,12 +98,12 @@ public class PhoneBookListAdapter extends BaseAdapter{
 				public void onClick(View arg0) {
 					Dialog dialog = new AlertDialog.Builder(context)
 		        	.setIcon(R.drawable.ic_launcher)
-		        	.setTitle("Do you want to remove it from your favorite list?")
-		        	.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+		        	.setTitle(resources.getString(R.string.info_removefavorite))
+		        	.setPositiveButton(resources.getString(R.string.lable_okbtn),new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							if(!FavoriteManager.getInstance().removeFromFavoriteList(targetInitials)){
-								Toast.makeText(context, "Save favorite list info failed", Toast.LENGTH_SHORT).show();
+								Toast.makeText(context, resources.getString(R.string.error_remove_favorite), Toast.LENGTH_SHORT).show();
 							}
 							for(int i = 0; i<pbItems.size(); i++){
 								PhoneBookItem pbi = pbItems.get(i);
@@ -113,7 +115,7 @@ public class PhoneBookListAdapter extends BaseAdapter{
 							PhoneBookListAdapter.this.notifyDataSetChanged();
 						}
 					})
-		        	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		        	.setNegativeButton(resources.getString(R.string.lable_cancelbtn), new DialogInterface.OnClickListener() {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -127,7 +129,6 @@ public class PhoneBookListAdapter extends BaseAdapter{
 			});
 			
 			FileInputStream fis = null;
-			Resources resources = context.getResources();
 			String initials = (pb == null ? null: pb.getInitials().toLowerCase());
 			
 			try{

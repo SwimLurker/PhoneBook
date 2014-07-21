@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+ 	<string name="info_update_package">Update data package succeed!</string>
+    <string name="info_call">Do you want to make the call?</string>
+    <string name="info_sms">Do you want to send the short message?</string>
+    <string name="info_addcontact">Do you want to add this into your address book?</string>
+    <string name="info_addfavorite">Do you want to add the person to your favorite list?</string>
+    <string name="info_removefavorite">Do you want to remove it from your favorite list?</string>    
+</resources>

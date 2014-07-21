@@ -22,6 +22,7 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.OperationApplicationException;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -55,9 +56,13 @@ public class DetailActivity extends Activity{
 	
 	private Uri contactUri = null;
 	
+	private Resources resources = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		resources = getResources();
 		
 		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		
@@ -108,11 +113,11 @@ public class DetailActivity extends Activity{
 		localnameTV.setText(pbItem.getLocalName());
 		
 		TextView genderTV = (TextView) findViewById(R.id.detail_gender);
-		String gender = "Unknown";
+		String gender = resources.getString(R.string.lable_gender_unknown);
 		if(pbItem.getGender() == PhoneBookItem.GENDER.MALE){
-			gender = "Male";
+			gender = resources.getString(R.string.lable_gender_male);
 		}else if(pbItem.getGender() == PhoneBookItem.GENDER.FEMALE){
-			gender = "Female";
+			gender = resources.getString(R.string.lable_gender_female);
 		}
 		genderTV.setText(gender);
 		
@@ -148,8 +153,8 @@ public class DetailActivity extends Activity{
 			public void onClick(View arg0) {
 				Dialog dialog = new AlertDialog.Builder(DetailActivity.this)
 		        	.setIcon(R.drawable.ic_launcher)
-		        	.setTitle("Do you want to make the call?")
-		        	.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+		        	.setTitle(resources.getString(R.string.info_call))
+		        	.setPositiveButton(resources.getString(R.string.lable_okbtn),new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							Intent intent = new Intent();
@@ -159,7 +164,7 @@ public class DetailActivity extends Activity{
 						    dialog.dismiss();
 						}
 					})
-		        	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		        	.setNegativeButton(resources.getString(R.string.lable_cancelbtn), new DialogInterface.OnClickListener() {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -179,8 +184,8 @@ public class DetailActivity extends Activity{
 			public void onClick(View arg0) {
 				Dialog dialog = new AlertDialog.Builder(DetailActivity.this)
 		        	.setIcon(R.drawable.ic_launcher)
-		        	.setTitle("Do you want to send the short message?")
-		        	.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+		        	.setTitle(resources.getString(R.string.info_sms))
+		        	.setPositiveButton(resources.getString(R.string.lable_okbtn),new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							Uri uri = Uri.parse("smsto:" + pbItem.getPhone());
@@ -197,7 +202,7 @@ public class DetailActivity extends Activity{
 							startActivity(intent);
 						}
 					})
-		        	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		        	.setNegativeButton(resources.getString(R.string.lable_cancelbtn), new DialogInterface.OnClickListener() {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -217,8 +222,8 @@ public class DetailActivity extends Activity{
 			public void onClick(View arg0) {
 				Dialog dialog = new AlertDialog.Builder(DetailActivity.this)
 		        	.setIcon(R.drawable.ic_launcher)
-		        	.setTitle("Do you want to add this into your address book?")
-		        	.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+		        	.setTitle(resources.getString(R.string.info_addcontact))
+		        	.setPositiveButton(resources.getString(R.string.lable_okbtn),new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							String initials = pbItem.getInitials().toLowerCase();
@@ -402,7 +407,7 @@ public class DetailActivity extends Activity{
 							return -1;
 						}
 					})
-		        	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		        	.setNegativeButton(resources.getString(R.string.lable_cancelbtn), new DialogInterface.OnClickListener() {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -427,8 +432,8 @@ public class DetailActivity extends Activity{
 				if(seatInfo == null){
 					Dialog dialog = new AlertDialog.Builder(DetailActivity.this)
 		        	.setIcon(R.drawable.ic_launcher)
-		        	.setTitle("Can not find map info for initial:" + initials)
-		        	.setPositiveButton("Close",new DialogInterface.OnClickListener() {
+		        	.setTitle(resources.getString(R.string.error_notfindmap) + initials)
+		        	.setPositiveButton(resources.getString(R.string.lable_closebtn),new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							dialog.dismiss();
@@ -452,21 +457,21 @@ public class DetailActivity extends Activity{
 			public void onClick(View arg0) {
 				
 				if(FavoriteManager.getInstance().isInFavoriteList(pbItem.getInitials())){
-					Toast.makeText(DetailActivity.this, "The person is already in your favorite list", Toast.LENGTH_SHORT).show();
+					Toast.makeText(DetailActivity.this, resources.getString(R.string.error_already_in_favoritelist), Toast.LENGTH_SHORT).show();
 				}else{
 				
 					Dialog dialog = new AlertDialog.Builder(DetailActivity.this)
 		        	.setIcon(R.drawable.ic_launcher)
-		        	.setTitle("Do you want to add the person to your favorite list?")
-		        	.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+		        	.setTitle(resources.getString(R.string.info_addfavorite))
+		        	.setPositiveButton(resources.getString(R.string.lable_okbtn),new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							if(!FavoriteManager.getInstance().addToFavoriteList(pbItem.getInitials())){
-								Toast.makeText(DetailActivity.this, "Save favorite list info failed", Toast.LENGTH_SHORT).show();
+								Toast.makeText(DetailActivity.this, resources.getString(R.string.error_save_favorite), Toast.LENGTH_SHORT).show();
 							}
 						}
 					})
-		        	.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		        	.setNegativeButton(resources.getString(R.string.lable_cancelbtn), new DialogInterface.OnClickListener() {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {

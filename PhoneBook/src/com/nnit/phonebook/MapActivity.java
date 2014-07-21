@@ -103,7 +103,7 @@ public class MapActivity extends Activity{
 		}
 		
 		TextView mapTitleTV = (TextView)findViewById(R.id.textview_maptitle);
-		mapTitleTV.setText("Seat Map(" + seatInfo.getInitials() +")");
+		mapTitleTV.setText(getResources().getString(R.string.title_map) + "(" + seatInfo.getInitials() +")");
 		
 		Bitmap bitmap = prepareSeatBitmap(seatInfo);
 		

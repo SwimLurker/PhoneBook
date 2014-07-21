@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="error_load_phonebook">Get Phonebook Item Error:</string>   
+	<string name="error_select_package">Please select data package file!</string>
+	<string name="error_update_package">Phonebook data file update fail!</string>
+	<string name="error_reload_data">Reload Phone Book Data Error:</string>
+	<string name="error_notfindmap">Can not find map info for initial:</string>
+	<string name="error_already_in_favoritelist" >The person is already in your favorite list.</string>
+	<string name="error_save_favorite" >Save favorite list info failed!</string>
+	<string name="error_remove_favorite" >Remove favorite list info failed!</string>
+	<string name="error_no_right_to_access">No rights to access!</string>
+</resources>
