@@ -9,7 +9,10 @@ import com.nnit.phonebook.data.DataPackageManager;
 
 public class ConfigManager {
 	public static String CONFIG_FAVORITELIST = "favorite_list";
-	public static String CONFIG_SHOWGUIDEPAGE = " show_guide_page";
+	public static String CONFIG_SHOWGUIDEPAGE = "show_guide_page";
+	public static String CONFIG_START_WIDGETUPDATE_SERVICE="start_update_widget_service";
+	public static String CONFIG_WIDGETUPDATE_INTERVAL="update_widget_interval";
+	
 	
 	private static ConfigManager _instance = null;
 	

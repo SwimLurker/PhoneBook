@@ -204,7 +204,7 @@
 		        <TextView
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			         android:paddingTop="@dimen/widget_line5_lable_toppadding"
+			        android:paddingTop="@dimen/widget_line5_lable_toppadding"
 			        android:paddingLeft="@dimen/widget_line5_lable_leftpadding"
 			        android:textSize="@dimen/widget_line5_lable_textsize"  
 			        android:textColor="@color/widget_lablecolor"

@@ -9,4 +9,5 @@
 	<string name="error_save_favorite" >Save favorite list info failed!</string>
 	<string name="error_remove_favorite" >Remove favorite list info failed!</string>
 	<string name="error_no_right_to_access">No rights to access!</string>
+	<string name="error_invalid_update_interval">Invalid widget update interval!</string>
 </resources>

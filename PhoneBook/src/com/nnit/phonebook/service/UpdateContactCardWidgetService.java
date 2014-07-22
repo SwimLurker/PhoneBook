@@ -3,8 +3,9 @@ package com.nnit.phonebook.service;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import com.nnit.phonebook.config.ConfigManager;
 import com.nnit.phonebook.data.PhoneBookItem;
-import com.nnit.phonebook.widget.NNITPhoneBookWidgetProvider;
+import com.nnit.phonebook.widget.ContactCardWidgetProvider;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -17,13 +18,14 @@ import android.os.IBinder;
 import android.text.format.Time;
 import android.widget.RemoteViews;
 
-public class UpdateWidgetService extends Service implements Runnable {
+public class UpdateContactCardWidgetService extends Service implements Runnable {
 	
-	private static final String TAG = "UpdateWidgetService";
+	private static final String TAG = "UpdateContactCardWidgetService";
 	private static Queue<Integer> appWidgetIds = new LinkedList<Integer>();
 	public static final String ACTION_UPDATE_ALL = "com.nnit.phonebook.widget.UPDATE_ALL";
 	private static boolean threadRunning = false;
 	private static Object lock = new Object();
+	private long updateInterval = 60000;
 	
 	@Override
 	public void run() {
@@ -33,10 +35,10 @@ public class UpdateWidgetService extends Service implements Runnable {
 		while(hasMoreUpdates()){
 			int appWidgetId = getNextWidgetId();
 		
-			PhoneBookItem pbi = NNITPhoneBookWidgetProvider.getNextFavoritePhoneBookItem();
+			PhoneBookItem pbi = ContactCardWidgetProvider.getNextFavoritePhoneBookItem();
 			
 			if(pbi != null){
-				updateViews = NNITPhoneBookWidgetProvider.updateAppWidget(this, pbi);
+				updateViews = ContactCardWidgetProvider.updateAppWidget(this, pbi);
 			}
 			if(updateViews != null){
 				appWidgetManager.updateAppWidget(appWidgetId, updateViews);
@@ -44,15 +46,24 @@ public class UpdateWidgetService extends Service implements Runnable {
 		}
 		
 		Intent updateIntent = new Intent(ACTION_UPDATE_ALL);
-		updateIntent.setClass(this, UpdateWidgetService.class);
+		updateIntent.setClass(this, UpdateContactCardWidgetService.class);
 		PendingIntent pending = PendingIntent.getService(this, 0, updateIntent, 0);
 		
-		AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-		Time time = new Time();
-		long now = System.currentTimeMillis();
-		time.set(now + 20000);
-		long updateTimes = time.toMillis(true);
-		alarm.set(AlarmManager.RTC_WAKEUP, updateTimes, pending);
+		String startServiceStr = ConfigManager.getInstance().getConfigure(ConfigManager.CONFIG_START_WIDGETUPDATE_SERVICE);
+		boolean bStopped = true;
+		if(startServiceStr != null && (startServiceStr.equalsIgnoreCase("1") || startServiceStr.equalsIgnoreCase("true"))){
+			bStopped = false;
+		}
+		if(!bStopped){
+			AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+			Time time = new Time();
+			long now = System.currentTimeMillis();
+			
+			
+			time.set(now + updateInterval);
+			long updateTimes = time.toMillis(true);
+			alarm.set(AlarmManager.RTC_WAKEUP, updateTimes, pending);
+		}
 		stopSelf();
 	}
 
@@ -99,12 +110,18 @@ public class UpdateWidgetService extends Service implements Runnable {
 	@Override
 	public void onStart(Intent intent, int startId){
 		super.onStart(intent, startId);
+		String updateIntervalStr = ConfigManager.getInstance().getConfigure(ConfigManager.CONFIG_WIDGETUPDATE_INTERVAL);
+		if(updateIntervalStr !=null){
+			updateInterval = Long.parseLong(updateIntervalStr);
+		}
+		
 		if(null != intent){
 			if(ACTION_UPDATE_ALL.equals(intent.getAction())){
 				AppWidgetManager widget = AppWidgetManager.getInstance(this);
-				updateAppWidgetIds(widget.getAppWidgetIds(new ComponentName(this, NNITPhoneBookWidgetProvider.class)));
+				updateAppWidgetIds(widget.getAppWidgetIds(new ComponentName(this, ContactCardWidgetProvider.class)));
 			}
 		}
+		
 		synchronized(lock){
 			if(!threadRunning){
 				threadRunning = true;

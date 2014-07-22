@@ -34,9 +34,57 @@
                     android:layout_height="wrap_content"
                     android:text="@string/show_guidepage"
                     android:textColor="#FFFFFF"
-                    android:textSize="@dimen/show_guidepage_text_size"
+                    android:textSize="@dimen/settings_text_size"
                     android:textStyle="normal" >
                 </TextView>
+            </TableRow>
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <CheckBox
+                    android:id="@+id/settings_startupdateservice"
+                    style="@style/MyCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dip"
+	                android:layout_marginLeft="10dip"
+	                android:layout_marginRight="5dip"
+	                android:layout_marginTop="5dip"
+                    android:checked="false"
+                    android:clickable="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start_update_service"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/settings_text_size"
+                    android:textStyle="normal" >
+                </TextView>
+            </TableRow>
+         </TableLayout>
+         <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/update_service_interval"
+                    android:textColor="#FFFFFF"
+                    android:textSize="@dimen/settings_text_size"
+                    android:textStyle="normal" >
+                </TextView>
+                <EditText
+                    android:id="@+id/settings_updateserviceinterval"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" 
+                    android:inputType="number"
+                    android:text="60000"/>
+                    
             </TableRow>
         </TableLayout>
     </LinearLayout>

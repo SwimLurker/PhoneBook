@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/transparent" >
+    <ImageButton 
+        android:id="@+id/widget_searcher"
+        android:layout_width="@dimen/widget_searcher_width"
+        android:layout_height="@dimen/widget_searcher_height"
+        android:background="@layout/selector_searcher" />
+</LinearLayout>

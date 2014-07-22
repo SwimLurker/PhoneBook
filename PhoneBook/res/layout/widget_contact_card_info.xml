@@ -3,5 +3,5 @@
     android:minWidth="@dimen/widget_width"
     android:minHeight="@dimen/widget_height"
     android:updatePeriodMillis="1800000"
-    android:initialLayout="@layout/nnit_phonebook_widget">
+    android:initialLayout="@layout/widget_contact_card">
 </appwidget-provider>

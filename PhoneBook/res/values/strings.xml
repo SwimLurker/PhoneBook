@@ -2,6 +2,8 @@
 <resources>
 
     <string name="app_name">NNIT PhoneBook</string>
+    <string name="widget_name_contact_card">Contact Card</string>
+    <string name="widget_name_searcher">PhoneBook Searcher</string>
     <string name="company">NNIT(Tianjin) Technology Co. Ltd.</string>
     <string name="menuitem_searchby">Search By...</string>
     <string name="menuitem_updatedatafile">Update Data File...</string>
@@ -30,6 +32,8 @@
     <string name="datapackage_file">Data Package File:</string>
     <string name="browse">Browse...</string>
     <string name="show_guidepage">Show guide page next time</string>
+    <string name="start_update_service">Auto update widget info(Notice: it will use more battery power)</string>
+    <string name="update_service_interval">Widget update interval time(ms):</string>
     <string name="title_mainpage">Phonebook</string>
     <string name="title_detailpage"></string>
     <string name="title_mappage">Seat Info</string>

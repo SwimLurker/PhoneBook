@@ -25,8 +25,12 @@
         </activity>
         <activity
             android:name="com.nnit.phonebook.MainActivity" 
-            android:configChanges="orientation|keyboard" >
-            <action android:name="com.nnit.phonebook.MainActivity" />
+            android:configChanges="orientation|keyboard" 
+            android:theme="@style/Transparent">
+            <intent-filter>
+            	<action android:name="com.nnit.phonebook.MainActivity" />
+            	<category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.nnit.phonebook.DetailActivity"
@@ -46,7 +50,17 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <receiver android:name="com.nnit.phonebook.widget.NNITPhoneBookWidgetProvider">
+        <activity
+            android:name="com.nnit.phonebook.SearchActivity" 
+            android:theme="@style/Transparent" 
+            android:configChanges="orientation|keyboard">
+            <intent-filter>
+                <action android:name="com.nnit.phonebook.SearchActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <receiver android:name="com.nnit.phonebook.widget.ContactCardWidgetProvider"
+            android:label="@string/widget_name_contact_card">
             <intent-filter >
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
@@ -54,11 +68,18 @@
                 <action android:name="com.nnit.phonebook.widget.SHOW_NEXT_PERSON" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider"
-                android:resource="@layout/nnit_phonebook_widget_info"/>
+                android:resource="@layout/widget_contact_card_info"/>
         </receiver>
-        
+         <receiver android:name="com.nnit.phonebook.widget.SearcherWidgetProvider"
+             android:label="@string/widget_name_searcher">
+            <intent-filter >
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@layout/widget_searcher_info"/>
+        </receiver>
        
-        <service android:name="com.nnit.phonebook.service.UpdateWidgetService">
+        <service android:name="com.nnit.phonebook.service.UpdateContactCardWidgetService">
             <intent-filter >
                 <action android:name="com.nnit.phonebook.widget.UPDATE_ALL" />
             </intent-filter>

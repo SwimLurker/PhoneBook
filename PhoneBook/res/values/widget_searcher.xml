@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<dimen name="widget_searcher_width">64dp</dimen>
+	<dimen name="widget_searcher_height">64dp</dimen>
+    <dimen name="widget_searcher_closebtn_topmargin">5dp</dimen>
+    <dimen name="widget_searcher_closebtn_rightmargin">5dp</dimen>
+    <dimen name="widget_searcher_toppadding">20dp</dimen>
+    <dimen name="widget_searcher_searchbtn_leftmargin">10dp</dimen>
+    <dimen name="widget_searcher_intials_rightmargin">10dp</dimen>
+</resources>

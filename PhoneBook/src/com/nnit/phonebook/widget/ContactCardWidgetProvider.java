@@ -9,12 +9,13 @@ import java.util.List;
 import com.nnit.phonebook.DetailActivity;
 import com.nnit.phonebook.MainActivity;
 import com.nnit.phonebook.R;
+import com.nnit.phonebook.config.ConfigManager;
 import com.nnit.phonebook.data.DataPackageManager;
 import com.nnit.phonebook.data.FavoriteManager;
 import com.nnit.phonebook.data.JSONPBDataSource;
 import com.nnit.phonebook.data.PhoneBookItem;
 import com.nnit.phonebook.data.PhotoManager;
-import com.nnit.phonebook.service.UpdateWidgetService;
+import com.nnit.phonebook.service.UpdateContactCardWidgetService;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -27,14 +28,16 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-public class NNITPhoneBookWidgetProvider extends AppWidgetProvider{
+public class ContactCardWidgetProvider extends AppWidgetProvider{
 	public static final String SHOW_NEXT_PERSON_ACTION = "com.nnit.phonebook.widget.SHOW_NEXT_PERSON";
 	
 	private static List<PhoneBookItem> pbItems = null;
 	private static int index = 0;
 	private static int layoutIndex = 0;
 	private static PhoneBookItem prePBI = null;
-	public NNITPhoneBookWidgetProvider(){
+	
+	
+	public ContactCardWidgetProvider(){
 		if(pbItems == null){
 			pbItems = getPhoneBook();
 		}
@@ -48,11 +51,22 @@ public class NNITPhoneBookWidgetProvider extends AppWidgetProvider{
 	@Override
 	public void onDisabled(Context context){
 		super.onDisabled(context);
+		//UpdateContactCardWidgetService.setStop();
 	}
 	
 	@Override
 	public void onEnabled(Context context){
 		super.onEnabled(context);
+		ConfigManager.getInstance().reloadConfigures();
+		
+		boolean bStartService = false;
+		String startServiceStr = ConfigManager.getInstance().getConfigure(ConfigManager.CONFIG_START_WIDGETUPDATE_SERVICE);
+		if(startServiceStr != null && (startServiceStr.equalsIgnoreCase("1") || startServiceStr.equalsIgnoreCase("true"))){
+			bStartService = true;
+		}
+		if(bStartService){
+			context.startService(new Intent(context, UpdateContactCardWidgetService.class));
+		}
 	}
 	
 	@Override
@@ -74,15 +88,11 @@ public class NNITPhoneBookWidgetProvider extends AppWidgetProvider{
 	
 	@Override
 	public void onUpdate(Context context, AppWidgetManager manager, int[] appWidgetIds){
+		UpdateContactCardWidgetService.updateAppWidgetIds(appWidgetIds);
 		
 		RemoteViews updateViews = null;
 		PhoneBookItem pbi = getNextFavoritePhoneBookItem();
-		if(pbi != null){
-			updateViews = updateAppWidget(context, pbi);
-		}
-		for(int i =0; i<appWidgetIds.length; i++){
-			
-		}
+		updateViews = updateAppWidget(context, pbi);
 		
 		if(updateViews != null){
 			manager.updateAppWidget(appWidgetIds, updateViews);
@@ -144,10 +154,10 @@ public class NNITPhoneBookWidgetProvider extends AppWidgetProvider{
 	public static RemoteViews updateAppWidget(Context context, PhoneBookItem pbi){
 		RemoteViews remoteViews = null;
 		if(layoutIndex == 0){
-			remoteViews = new RemoteViews(context.getPackageName(),R.layout.nnit_phonebook_widget);
+			remoteViews = new RemoteViews(context.getPackageName(),R.layout.widget_contact_card);
 			layoutIndex = 1;
 		}else{
-			remoteViews = new RemoteViews(context.getPackageName(),R.layout.nnit_phonebook_widget2);
+			remoteViews = new RemoteViews(context.getPackageName(),R.layout.widget_contact_card2);
 			layoutIndex = 0;
 		}
 		

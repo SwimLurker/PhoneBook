@@ -8,6 +8,10 @@
         android:layout_width="@dimen/list_photo_width"
         android:layout_height="@dimen/list_photo_height"
         android:src="@drawable/photo" />
+	<ImageView 
+	    android:layout_width="@dimen/list_photo_width"
+        android:layout_height="@dimen/list_photo_height"
+        android:src="@drawable/list_photoframe" />
     <TextView
         android:id="@+id/detailList_Initials"
         android:layout_width="fill_parent"

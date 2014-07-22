@@ -3,6 +3,7 @@ package com.nnit.phonebook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import com.nnit.phonebook.data.JSONPBDataSource;
 import com.nnit.phonebook.data.PhoneBookField;
 import com.nnit.phonebook.data.PhoneBookItem;
 import com.nnit.phonebook.data.PhotoManager;
+import com.nnit.phonebook.service.UpdateContactCardWidgetService;
 import com.nnit.phonebook.ui.IFrameAnimationListener;
 import com.nnit.phonebook.ui.MenuView;
 import com.nnit.phonebook.ui.MyAnimationDrawable;
@@ -56,6 +58,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -71,6 +75,8 @@ import android.graphics.drawable.BitmapDrawable;
 public class MainActivity extends Activity {
 
 	public static final String SELECTED_PBITEM = "com.nnit.phonebook.SELECTED_PBITEM";
+	public static final String SEARCH_INITIALS = "com.nnit.phonebook.SEARCH_INITIALS";
+	
 	private List<PhoneBookItem> pbItems = null;
 	private IPBDataSet fullPBDS = null;
 	public static boolean isDetailList = true;
@@ -111,7 +117,6 @@ public class MainActivity extends Activity {
         resources = getResources();
         //first unpack data package if not
         unpackDataPackage(this);
-         
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         inflater = getLayoutInflater();
@@ -242,6 +247,7 @@ public class MainActivity extends Activity {
         if(detailList == null){
 			detailList = (ListView) findViewById(R.id.detail_list);
 		}
+        
         try{
         	pbItems = getPhoneBook(); 	
         }catch(Exception exp){
@@ -249,23 +255,10 @@ public class MainActivity extends Activity {
         	Toast.makeText(this, resources.getString(R.string.error_load_phonebook) + exp.getMessage(), Toast.LENGTH_LONG).show();
         }
         
-        if(FavoriteManager.getInstance().hasFavoriteList()){
-        	showFavorite = true;
-        	setPhoneBookItems(getFavoriteList(fullPBDS.getPBItems()));
-        	titleTextView.setText(resources.getString(R.string.title_favoritelist) + "(" + pbItems.size() +")");
-        	favoriteListBtn.setChecked(true);
-        	detailListBtn.setChecked(false);
-        }else{
-        	showFavorite = false;
-        	titleTextView.setText(resources.getString(R.string.title_phonebooklist) + "(" + pbItems.size() +")");
-        	favoriteListBtn.setChecked(false);
-        	detailListBtn.setChecked(true);
-        }
         
+        //briefList.setAdapter(new PhoneBookListAdapter(this, pbItems));     
         
-        briefList.setAdapter(new PhoneBookListAdapter(this, pbItems));     
-        
-    	detailList.setAdapter(new PhoneBookListAdapter(this, pbItems));
+    	//detailList.setAdapter(new PhoneBookListAdapter(this, pbItems));
        
         briefList.setOnItemClickListener(new OnItemClickListener(){
 
@@ -297,18 +290,39 @@ public class MainActivity extends Activity {
         detailList.setVisibility(View.GONE);
         
         
+		String searchInitials = null;
+		Intent intent = getIntent();
+		if(intent != null){
+			Bundle bundle = intent.getExtras();
+			if(bundle != null){
+				searchInitials = (String)bundle.get(SEARCH_INITIALS);
+			}
+		}
+        if(searchInitials != null){
+        	showFavorite = false;
+        	setPhoneBookItems(fullPBDS.filter(PhoneBookField.INITIALS, searchInitials).getPBItems());
+
+		}else{
+			if(FavoriteManager.getInstance().hasFavoriteList()){
+	        	setPhoneBookItems(getFavoriteList(fullPBDS.getPBItems()));	  
+	        	showFavorite = true;
+	        }else{
+	        	showFavorite = false;	        	
+	        }
+		}
+        updateLayout();
+        
         
         guidePageLayout = (RelativeLayout)findViewById(R.id.guidePageLayout);
 		mainPageLayout =  (LinearLayout)findViewById(R.id.mainPageLayout);
 		
-		if(isShowGuidePage()){
+        if(searchInitials==null && isShowGuidePage()){
 			guidePageLayout.setVisibility(View.VISIBLE);
 			mainPageLayout.setVisibility(View.GONE);
 		}else{
 			guidePageLayout.setVisibility(View.GONE);
 			mainPageLayout.setVisibility(View.VISIBLE);
 		}
-        
     }
     
     @Override
@@ -324,6 +338,14 @@ public class MainActivity extends Activity {
     		return false;
     	}
 		return true;
+	}
+    
+    private boolean startWidgetUpdateService() {
+    	String startService = ConfigManager.getInstance().getConfigure(ConfigManager.CONFIG_START_WIDGETUPDATE_SERVICE);
+    	if(startService != null && (startService.equals("1")||startService.equalsIgnoreCase("true"))){
+    		return true;
+    	}
+		return false;
 	}
     
     
@@ -558,26 +580,101 @@ public class MainActivity extends Activity {
     	final View dialogView = inflater.inflate(R.layout.dialog_settings, null);
     	
     	CheckBox showGuideCB = (CheckBox)dialogView.findViewById(R.id.settings_showguide);
-    	
     	showGuideCB.setChecked(isShowGuidePage());
     	
+    	CheckBox startServiceCB = (CheckBox)dialogView.findViewById(R.id.settings_startupdateservice);
+    	startServiceCB.setChecked(startWidgetUpdateService());
+    	
+		final EditText updateIntervalET = (EditText)dialogView.findViewById(R.id.settings_updateserviceinterval);
+		updateIntervalET.setText(ConfigManager.getInstance().getConfigure(ConfigManager.CONFIG_WIDGETUPDATE_INTERVAL));
+		
+		if(startWidgetUpdateService()){
+			updateIntervalET.setEnabled(true);
+			updateIntervalET.setFocusable(true);
+			updateIntervalET.setFocusableInTouchMode(true);
+		}else{
+			updateIntervalET.setEnabled(false);
+			updateIntervalET.setFocusable(false);
+			updateIntervalET.setFocusableInTouchMode(false);
+		}
+		
+		startServiceCB.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
+				if(isChecked){
+					updateIntervalET.setEnabled(true);
+					updateIntervalET.setFocusable(true);
+					updateIntervalET.setFocusableInTouchMode(true);
+				}else{
+					updateIntervalET.setEnabled(false);
+					updateIntervalET.setFocusable(false);
+					updateIntervalET.setFocusableInTouchMode(true);
+				}
+			}
+			
+		});
+		
     	
     	Dialog dialog = new AlertDialog.Builder(this)
         	.setIcon(R.drawable.ic_launcher)
         	.setTitle(resources.getString(R.string.title_settingsdialog))
         	.setView(dialogView)
-        	.setPositiveButton(resources.getString(R.string.lable_okbtn),new DialogInterface.OnClickListener() {
+        	.setNeutralButton(resources.getString(R.string.lable_okbtn),new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					// TODO Auto-generated method stub
+					try{
+						Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
+						field.setAccessible(true);  
+			            field.set(dialog, false);
+			        }catch(Exception e) {
+			        	e.printStackTrace();  
+			        }  
+			           
 					CheckBox showGuideCB = (CheckBox)dialogView.findViewById(R.id.settings_showguide);
 					ConfigManager.getInstance().saveConfigure(ConfigManager.CONFIG_SHOWGUIDEPAGE, showGuideCB.isChecked()?"1":"0");
+					CheckBox startServiceCB = (CheckBox)dialogView.findViewById(R.id.settings_startupdateservice);
+					ConfigManager.getInstance().saveConfigure(ConfigManager.CONFIG_START_WIDGETUPDATE_SERVICE, startServiceCB.isChecked()?"1":"0");
+					EditText updateIntervalET = (EditText)dialogView.findViewById(R.id.settings_updateserviceinterval);
+					String intervalStr = updateIntervalET.getText().toString();
+					if(startServiceCB.isChecked()){
+						long interval = -1;
+						try{
+							interval = Long.parseLong(intervalStr);
+						}catch(Exception exp){
+							Toast.makeText(MainActivity.this, resources.getString(R.string.error_invalid_update_interval), Toast.LENGTH_SHORT).show();
+							return;
+						}
+						
+						if(interval <=0){
+							Toast.makeText(MainActivity.this, resources.getString(R.string.error_invalid_update_interval), Toast.LENGTH_SHORT).show();
+							return;
+						}
+						
+						ConfigManager.getInstance().saveConfigure(ConfigManager.CONFIG_WIDGETUPDATE_INTERVAL, intervalStr);
+					}
+					
+					try{
+						Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
+						field.setAccessible(true);  
+			            field.set(dialog, true);
+			        }catch(Exception e) {
+			        	e.printStackTrace();  
+			        }
+					dialog.dismiss();
 				}
 			})
         	.setNegativeButton(resources.getString(R.string.lable_cancelbtn), new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
+					try{
+						Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
+						field.setAccessible(true);  
+			            field.set(dialog, true);
+			        }catch(Exception e) {
+			        	e.printStackTrace();  
+			        }  
 					dialog.dismiss();
 					
 				}
