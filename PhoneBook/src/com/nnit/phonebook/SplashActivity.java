@@ -2,6 +2,7 @@ package com.nnit.phonebook;
 
 
 import com.nnit.phonebook.R;
+import com.nnit.phonebook.config.ConfigManager;
 import com.nnit.phonebook.ui.ISplashImageProvider;
 import com.nnit.phonebook.ui.SplashImageProviderManager;
 
@@ -60,11 +61,16 @@ public class SplashActivity extends Activity {
 
 			@Override
 			public void run() {
+				if(isShowGuidePage()){
+					Intent guideIntent = new Intent(SplashActivity.this, GuideActivity.class);
+					SplashActivity.this.startActivity(guideIntent);
+					SplashActivity.this.finish();
+				}else{
 				
-				Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
-				SplashActivity.this.startActivity(mainIntent);
-				SplashActivity.this.finish();
-				
+					Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
+					SplashActivity.this.startActivity(mainIntent);
+					SplashActivity.this.finish();
+				}
 			}
 			
 		}, SPLASH_DISPLAY_LENGTH);
@@ -72,4 +78,11 @@ public class SplashActivity extends Activity {
 		as.startNow();
 	}
 	
+	private boolean isShowGuidePage() {
+    	String showGuidePage = ConfigManager.getInstance().getConfigure(ConfigManager.CONFIG_SHOWGUIDEPAGE);
+    	if(showGuidePage != null && (showGuidePage.equals("0")||showGuidePage.equalsIgnoreCase("false"))){
+    		return false;
+    	}
+		return true;
+	}
 }

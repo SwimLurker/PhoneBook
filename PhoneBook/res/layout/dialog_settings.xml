@@ -5,12 +5,12 @@
     android:scrollbars="vertical" >
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical" >
 
         <TableLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
 
             <TableRow
@@ -60,7 +60,8 @@
                     android:text="@string/start_update_service"
                     android:textColor="#FFFFFF"
                     android:textSize="@dimen/settings_text_size"
-                    android:textStyle="normal" >
+                    android:textStyle="normal" 
+                    android:singleLine="false">
                 </TextView>
             </TableRow>
          </TableLayout>

@@ -1,86 +1,19 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
-    <RelativeLayout 
-    	android:layout_width="match_parent"
-    	android:layout_height="match_parent" 
-    	android:background="#FFFFFF">
-    <RelativeLayout 
-        android:id="@+id/guidePageLayout"
-    	android:layout_width="match_parent"
-    	android:layout_height="match_parent" >
-	     <LinearLayout
-	        	android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:orientation="vertical" >
-	            <android.support.v4.view.ViewPager
-	                android:id="@+id/guidePages"
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content" />
-	     </LinearLayout>
-
-	     <LinearLayout
-	         	android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:orientation="vertical" >
-	
-	            <RelativeLayout
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:orientation="vertical" >
-	
-	                <LinearLayout
-	                    android:id="@+id/viewGroup"
-	                    android:layout_width="fill_parent"
-	                    android:layout_height="wrap_content"
-	                    android:layout_alignParentBottom="true"
-	                    android:layout_marginBottom="10dp"
-	                    android:gravity="center_horizontal"
-	                    android:orientation="horizontal" >
-	                </LinearLayout>
-	            </RelativeLayout>
-	    </LinearLayout>
-	</RelativeLayout>
-	</RelativeLayout>
-	<ImageView 
-        android:id="@+id/animationImage"
-    	android:layout_width="match_parent"
-    	android:layout_height="match_parent" 
-    	android:visibility="gone" />
-    <LinearLayout
-        android:id="@+id/mainPageLayout"
+   	<ListView
+        android:id="@+id/brief_list"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:orientation="vertical" 
-        android:background="#000000">
-	 	<LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="@dimen/activity_title_height"
-	        android:orientation="vertical" >
-			<RelativeLayout 
-			    android:layout_width="fill_parent"
-	    		android:layout_height="fill_parent" 
-	    		android:background="#2f1f22">
-	        	<include layout="@layout/titlebar_main" />
-	        </RelativeLayout>
-	    </LinearLayout>
-	 	<ListView
-	        android:id="@+id/brief_list"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1" >
-	    </ListView>
-	    <ListView
-	        android:id="@+id/detail_list"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1">
-	    </ListView>
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
+    </ListView>
+    <ListView
+        android:id="@+id/detail_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+    </ListView>
+</LinearLayout>
 
-</RelativeLayout>

@@ -12,7 +12,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        >
+        android:theme="@style/PhoneBookList">
         <activity
             android:name="com.nnit.phonebook.SplashActivity"
             android:label="@string/app_name"
@@ -24,9 +24,16 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.nnit.phonebook.GuideActivity" 
+            android:configChanges="orientation|keyboard" >
+            <intent-filter>
+            	<action android:name="com.nnit.phonebook.GuideActivity" />
+            	<category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name="com.nnit.phonebook.MainActivity" 
-            android:configChanges="orientation|keyboard" 
-            android:theme="@style/Transparent">
+            android:configChanges="orientation|keyboard" >
             <intent-filter>
             	<action android:name="com.nnit.phonebook.MainActivity" />
             	<category android:name="android.intent.category.DEFAULT" />

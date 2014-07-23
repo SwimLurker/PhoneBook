@@ -51,6 +51,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -92,13 +93,6 @@ public class MainActivity extends Activity {
 	private ToggleButton detailListBtn = null;
 	private ToggleButton favoriteListBtn = null;
 	
-	private ViewPager viewPager;
-	private ArrayList<View> pageViews;
-	private ImageView[] imageViews;
-	
-	private CheckBox showGuidePageCB = null;
-	private RelativeLayout guidePageLayout;
-	private LinearLayout mainPageLayout;
 	
 	private Resources resources = null;
 	
@@ -118,58 +112,13 @@ public class MainActivity extends Activity {
         //first unpack data package if not
         unpackDataPackage(this);
         
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        inflater = getLayoutInflater();
+        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         
-        //prepare guide pages
-        pageViews = new ArrayList<View>();
-        View guide1PageView = inflater.inflate(R.layout.pageview_guide1, null);
-        View guide2PageView = inflater.inflate(R.layout.pageview_guide2, null);
-		View guide3PageView = inflater.inflate(R.layout.pageview_guide3, null);
-		View guide4PageView = inflater.inflate(R.layout.pageview_guide4, null);
-		View guide5PageView = inflater.inflate(R.layout.pageview_guide5, null);
+        setContentView(R.layout.activity_main);
+        
+		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titlebar_main);
 		
-		pageViews.add(guide1PageView);
-		pageViews.add(guide2PageView);
-		pageViews.add(guide3PageView);
-		pageViews.add(guide4PageView);
-		pageViews.add(guide5PageView);
-		
-		imageViews = new ImageView[pageViews.size()];
-		
-		ViewGroup main = (ViewGroup) inflater.inflate(R.layout.activity_main, null);
-		ViewGroup group = (ViewGroup) main.findViewById(R.id.viewGroup);
-		viewPager = (ViewPager) main.findViewById(R.id.guidePages);
-
-		for (int i = 0; i < pageViews.size(); i++) {
-			ImageView imageView = new ImageView(this);
-			imageView.setLayoutParams(new LayoutParams(20, 20));
-			imageView.setPadding(200, 0, 200, 0);
-			imageViews[i] = imageView;
-
-			if (i == 0) {
-				imageViews[i].setBackgroundResource(R.drawable.page_indicator_focused_1);
-			} else {
-				imageViews[i].setBackgroundResource(R.drawable.page_indicator);
-			}
-			group.addView(imageViews[i]);
-		}
-		viewPager.setAdapter(new GuidePageAdapter());
-		viewPager.setOnPageChangeListener(new GuidePageChangeListener());
-		
-		setContentView(main);
-		
-		
-		ImageButton enterBtn= (ImageButton) guide5PageView.findViewById(R.id.guidepage_enterbtn);
-		enterBtn.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v) {			
-				showMainPageWithAnimation();
-				
-			}
-		});
-		showGuidePageCB = (CheckBox) guide5PageView.findViewById(R.id.guidepage_showguide);
+		inflater = getLayoutInflater();  
 		
         titleTextView = (TextView)findViewById(R.id.textview_title);
         
@@ -238,7 +187,8 @@ public class MainActivity extends Activity {
 				switchSysMenuShow();
 			}      	
         });
-             
+        
+        
              
         if(briefList == null){
 			briefList = (ListView) findViewById(R.id.brief_list);
@@ -311,18 +261,7 @@ public class MainActivity extends Activity {
 	        }
 		}
         updateLayout();
-        
-        
-        guidePageLayout = (RelativeLayout)findViewById(R.id.guidePageLayout);
-		mainPageLayout =  (LinearLayout)findViewById(R.id.mainPageLayout);
-		
-        if(searchInitials==null && isShowGuidePage()){
-			guidePageLayout.setVisibility(View.VISIBLE);
-			mainPageLayout.setVisibility(View.GONE);
-		}else{
-			guidePageLayout.setVisibility(View.GONE);
-			mainPageLayout.setVisibility(View.VISIBLE);
-		}
+
     }
     
     @Override
@@ -332,13 +271,7 @@ public class MainActivity extends Activity {
     	android.os.Process.killProcess(android.os.Process.myPid());
     }
     
-    private boolean isShowGuidePage() {
-    	String showGuidePage = ConfigManager.getInstance().getConfigure(ConfigManager.CONFIG_SHOWGUIDEPAGE);
-    	if(showGuidePage != null && (showGuidePage.equals("0")||showGuidePage.equalsIgnoreCase("false"))){
-    		return false;
-    	}
-		return true;
-	}
+    
     
     private boolean startWidgetUpdateService() {
     	String startService = ConfigManager.getInstance().getConfigure(ConfigManager.CONFIG_START_WIDGETUPDATE_SERVICE);
@@ -586,7 +519,10 @@ public class MainActivity extends Activity {
     	startServiceCB.setChecked(startWidgetUpdateService());
     	
 		final EditText updateIntervalET = (EditText)dialogView.findViewById(R.id.settings_updateserviceinterval);
-		updateIntervalET.setText(ConfigManager.getInstance().getConfigure(ConfigManager.CONFIG_WIDGETUPDATE_INTERVAL));
+		String intervalStr = ConfigManager.getInstance().getConfigure(ConfigManager.CONFIG_WIDGETUPDATE_INTERVAL);
+		if(intervalStr != null && !intervalStr.equals("")){
+			updateIntervalET.setText(intervalStr);
+		}
 		
 		if(startWidgetUpdateService()){
 			updateIntervalET.setEnabled(true);
@@ -854,214 +790,12 @@ public class MainActivity extends Activity {
     		detailListBtn.setChecked(true);
     	}
     }
-    
-    private void showMainPage(){
-    	ConfigManager.getInstance().saveConfigure(ConfigManager.CONFIG_SHOWGUIDEPAGE, showGuidePageCB.isChecked()?"1":"0");
-    	guidePageLayout.setVisibility(View.GONE);
-    	mainPageLayout.setVisibility(View.VISIBLE);
-    }
-    
-    private void showMainPageWithAnimation() {
-    	ConfigManager.getInstance().saveConfigure(ConfigManager.CONFIG_SHOWGUIDEPAGE, showGuidePageCB.isChecked()?"1":"0");
-    	
-    	
-    	Animation ani = new AlphaAnimation(1.0f, 0.0f);
-		ani.setDuration(1000);			
-		
-		guidePageLayout.setAnimation(ani);
-		
-		ani.setAnimationListener(new AnimationListener(){
 
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				guidePageLayout.setVisibility(View.GONE);
-		    	mainPageLayout.setVisibility(View.VISIBLE);
-				
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onAnimationStart(Animation animation) {
-				
-				
-			}
-			
-		});
-		
-		ani.startNow();
-    }
-    
-    private void showMainPageWithFrameAnimation(){
-    	
-    	ConfigManager.getInstance().saveConfigure(ConfigManager.CONFIG_SHOWGUIDEPAGE, showGuidePageCB.isChecked()?"1":"0");
-    	
-    	Bitmap screenShot = getScreenShot(MainActivity.this);
-    	
-    	final ImageView aniImageView = (ImageView)findViewById(R.id.animationImage);
-		
-		MyAnimationDrawable anim = new MyAnimationDrawable();
-		
-		int totalFrameCount = 20;
-		for(int i = 0;i<=totalFrameCount; i++){
-			anim.addFrame(getAnimationFrame(screenShot, i, totalFrameCount), 1000/totalFrameCount);
-		}
-		
-		anim.addFrameAnimationListener(new IFrameAnimationListener(){
-			
-			@Override
-			public void onAnimationStart() {
-				guidePageLayout.setVisibility(View.GONE);
-				aniImageView.setVisibility(View.VISIBLE);
-				Log.d("Animation", "animation start");
-			}
-			
-			@Override
-			public void onAnimationEnd() {
-				aniImageView.setVisibility(View.GONE);
-				mainPageLayout.setVisibility(View.VISIBLE);
-				Log.d("Animation", "animation end");
-			}
-			
-		});
-		anim.setOneShot(true);
-		aniImageView.setBackgroundDrawable(anim);
-		anim.start();
-		
-	}
-    
-    private Drawable getAnimationFrame(Bitmap sourceBitmap, int index, int totalFrameCount) {
-		Bitmap bitmap = getFrameBitmap(sourceBitmap, index, totalFrameCount);
-		if(bitmap != null){
-			return new BitmapDrawable(bitmap);
-		}
-		return null;
-	}
-
-	private Bitmap getFrameBitmap(Bitmap sourceBitmap, int index, int totalFrameCount) {
-		
-		int bitmapWidth = sourceBitmap.getWidth();
-		int bitmapHeight = sourceBitmap.getHeight();
-
-		Bitmap resultBMP = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.RGB_565);
-
-		Canvas canvas = new Canvas(resultBMP);
-		
-		Matrix m = new Matrix();
-		m.setScale((float)(totalFrameCount-index)/totalFrameCount, (float)(totalFrameCount -index)/totalFrameCount);
-		
-		Paint paint = new Paint();
-		
-		
-		canvas.drawBitmap(sourceBitmap, m, paint);
-		
-		return resultBMP;
-	}
-
-	private Bitmap getScreenShot(Activity activity) {
-		 
-		View decorView = activity.getWindow().getDecorView();
-		decorView.setDrawingCacheEnabled(true);
-		decorView.buildDrawingCache();
-		Bitmap bitmap = decorView.getDrawingCache();
-		
-		Rect rect = new Rect();
-		decorView.getWindowVisibleDisplayFrame(rect);
-		int statusBarHeight = rect.top;
-		int width = activity.getWindowManager().getDefaultDisplay().getWidth();
-		int height = activity.getWindowManager().getDefaultDisplay().getHeight();
-		
-		Bitmap result = Bitmap.createBitmap(bitmap, 0, statusBarHeight, width, height - statusBarHeight);
-		
-		decorView.destroyDrawingCache();
-		
-		return result;
-	}
-    
-    class GuidePageAdapter extends PagerAdapter {
-
-		@Override
-		public int getCount() {
-			// TODO Auto-generated method stub
-			return pageViews.size();
-		}
-
-		@Override
-		public boolean isViewFromObject(View arg0, Object arg1) {
-			// TODO Auto-generated method stub
-			return arg0 == arg1;
-		}
-
-		@Override
-		public int getItemPosition(Object object) {
-			// TODO Auto-generated method stub
-			return super.getItemPosition(object);
-		}
-
-		@Override
-		public void destroyItem(View arg0, int arg1, Object arg2) {
-			// TODO Auto-generated method stub
-			((ViewPager) arg0).removeView(pageViews.get(arg1));
-		}
-
-		@Override
-		public Object instantiateItem(View arg0, int arg1) {
-			// TODO Auto-generated method stub
-			((ViewPager) arg0).addView(pageViews.get(arg1));
-			return pageViews.get(arg1);
-		}
-	}
-
-	class GuidePageChangeListener implements OnPageChangeListener {
-
-		boolean isScrolled = false;
-		
-		@Override
-		public void onPageScrollStateChanged(int status) {
-			switch (status){
-				case 1:
-					isScrolled = false;
-					break;
-				case 2:
-					isScrolled =true;
-					break;
-				case 0:
-					if(viewPager.getCurrentItem() == viewPager.getAdapter().getCount()-1 && !isScrolled){
-						showMainPage();
-					}
-					break;
-			}
-		}
-
-		@Override
-		public void onPageScrolled(int arg0, float arg1, int arg2) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onPageSelected(int index) {
-			if(index == 0){
-				imageViews[index].setBackgroundResource(R.drawable.page_indicator_focused_1);
-			}else if(index == 1){
-				imageViews[index].setBackgroundResource(R.drawable.page_indicator_focused_2);
-			}else if(index == 2){
-				imageViews[index].setBackgroundResource(R.drawable.page_indicator_focused_3);
-			}else if(index == 3){
-				imageViews[index].setBackgroundResource(R.drawable.page_indicator_focused_4);
-			}else{
-				imageViews[index].setBackgroundResource(R.drawable.page_indicator_focused_5);
-			}
-			for (int i = 0; i < imageViews.length; i++) {
-				if (index != i) {
-					imageViews[i].setBackgroundResource(R.drawable.page_indicator);
-				}
-			}
-		}
-
+	private boolean isShowGuidePage() {
+    	String showGuidePage = ConfigManager.getInstance().getConfigure(ConfigManager.CONFIG_SHOWGUIDEPAGE);
+    	if(showGuidePage != null && (showGuidePage.equals("0")||showGuidePage.equalsIgnoreCase("false"))){
+    		return false;
+    	}
+		return true;
 	}
 }
