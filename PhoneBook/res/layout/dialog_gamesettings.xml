@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="vertical" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+			<TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/game_lable_settings_music"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    android:layout_weight="5.0" >
+                </TextView>
+                <ToggleButton
+			        android:id="@+id/game_settings_music"
+			        android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:layout_gravity="center"
+			    	android:textOn=""
+		            android:textOff="" 
+		            android:layout_weight="1.0"
+		            android:background="@layout/selector_togglebutton"
+		            android:layout_margin="10dp" />
+             
+            </TableRow>
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/game_lable_settings_sfx"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    android:layout_weight="5.0" >
+                </TextView>
+                <ToggleButton
+			        android:id="@+id/game_settings_sfx"
+			        android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:layout_gravity="center"
+			    	android:textOn=""
+		            android:textOff="" 
+		            android:layout_weight="1.0" 
+		            android:background="@layout/selector_togglebutton"
+		            android:layout_margin="10dp" />
+             
+            </TableRow>
+          	<TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/game_lable_settings_rows_count"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    android:layout_weight="5.0" >
+                </TextView>
+                <EditText 
+                    android:id="@+id/game_settings_rows"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="4"
+                    android:textSize="14sp"
+                    android:layout_weight="1.0" 
+                    android:layout_marginRight ="10dp" />
+            </TableRow>
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/game_lable_settings_columns_count"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    android:layout_weight="5.0"  >
+                </TextView>
+                <EditText 
+                    android:id="@+id/game_settings_columns"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="4"
+                    android:textSize="14sp"
+                    android:layout_weight="1.0"
+                    android:layout_marginRight ="10dp" />
+            </TableRow>
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/game_lable_settings_same_image_count"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="normal" 
+                    android:layout_weight="5.0" >
+                </TextView>
+                <EditText 
+                    android:id="@+id/game_settings_sameimagecount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="4"
+                    android:textSize="14sp"
+                    android:layout_weight="1.0" 
+                    android:layout_marginRight ="10dp" />
+            </TableRow>
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/game_lable_settings_max_hint_number"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="normal" 
+                    android:layout_weight="5.0" >
+                </TextView>
+                <EditText 
+                    android:id="@+id/game_settings_maxhintnumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberSigned"
+                    android:ems="4"
+                    android:textSize="14sp" 
+                    android:layout_weight="1.0" 
+                    android:layout_marginRight ="10dp" />
+            </TableRow>
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/game_lable_settings_max_time"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    android:layout_weight="5.0" >
+                </TextView>
+                <EditText 
+                    android:id="@+id/game_settings_maxtime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberSigned"
+                    android:ems="4"
+                    android:textSize="14sp" 
+                    android:layout_weight="1.0" 
+                    android:layout_marginRight ="10dp" />
+            </TableRow>
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/game_lable_settings_bonus_time"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    android:layout_weight="5.0" >
+                </TextView>
+                <EditText 
+                    android:id="@+id/game_settings_bonustime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="4"
+                    android:textSize="14sp"
+                    android:layout_weight="1.0" 
+                    android:layout_marginRight ="10dp" />
+           </TableRow>
+           
+    	</TableLayout>
+    </LinearLayout>
+
+</ScrollView>

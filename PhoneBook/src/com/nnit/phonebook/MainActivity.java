@@ -18,6 +18,7 @@ import com.nnit.phonebook.data.JSONPBDataSource;
 import com.nnit.phonebook.data.PhoneBookField;
 import com.nnit.phonebook.data.PhoneBookItem;
 import com.nnit.phonebook.data.PhotoManager;
+import com.nnit.phonebook.game.Game;
 import com.nnit.phonebook.service.UpdateContactCardWidgetService;
 import com.nnit.phonebook.ui.IFrameAnimationListener;
 import com.nnit.phonebook.ui.MenuView;
@@ -620,6 +621,18 @@ public class MainActivity extends Activity {
     
     private void showAboutDialog() {
     	final View dialogView = inflater.inflate(R.layout.dialog_about, null);
+    	ImageButton bulbBtn = (ImageButton)dialogView.findViewById(R.id.btn_bulb);
+    	bulbBtn.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				Intent gameIntent = new Intent();
+				gameIntent.setAction("com.nnit.phonebook.GameActivity");
+				startActivity(gameIntent);
+			}
+    		
+    	});
+    	
     	Dialog dialog = new AlertDialog.Builder(this)
         	.setIcon(R.drawable.ic_launcher)
         	.setTitle(resources.getString(R.string.title_aboutdialog))
@@ -629,7 +642,6 @@ public class MainActivity extends Activity {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.dismiss();
-					
 				}
 			})
         	.show();

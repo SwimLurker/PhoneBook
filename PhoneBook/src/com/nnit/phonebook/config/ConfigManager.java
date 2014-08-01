@@ -13,6 +13,15 @@ public class ConfigManager {
 	public static String CONFIG_START_WIDGETUPDATE_SERVICE="start_update_widget_service";
 	public static String CONFIG_WIDGETUPDATE_INTERVAL="update_widget_interval";
 	
+	public static String CONFIG_GAME_MUSIC_ON = "game_music";
+	public static String CONFIG_GAME_SFX_ON = "game_sfx";
+	public static String CONFIG_GAME_ROWNUMBER = "game_row_number";
+	public static String CONFIG_GAME_COLUMNNUMBER = "game_column_number";
+	public static String CONFIG_GAME_SAMEIMAGECOUNT = "game_same_image_count";
+	public static String CONFIG_GAME_MAXHINTNUMBER = "game_max_hint_number";
+	public static String CONFIG_GAME_MAXTIME = "game_max_time";
+	public static String CONFIG_GAME_BONUSTIME = "game_bonus_time";
+	
 	
 	private static ConfigManager _instance = null;
 	

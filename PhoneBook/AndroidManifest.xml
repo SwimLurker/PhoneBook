@@ -20,7 +20,8 @@
             android:configChanges="orientation|keyboard">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                
+                  <category android:name="android.intent.category.LAUNCHER" /> 
             </intent-filter>
         </activity>
         <activity
@@ -66,6 +67,15 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.nnit.phonebook.GameActivity" 
+            android:configChanges="orientation|keyboard">
+            <intent-filter>
+                <action android:name="com.nnit.phonebook.GameActivity" />
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+                 <category android:name="android.intent.category.DEFAULT" /> 
+            </intent-filter>
+        </activity>
         <receiver android:name="com.nnit.phonebook.widget.ContactCardWidgetProvider"
             android:label="@string/widget_name_contact_card">
             <intent-filter >
@@ -91,7 +101,8 @@
                 <action android:name="com.nnit.phonebook.widget.UPDATE_ALL" />
             </intent-filter>
         </service>
-      
+      	<service android:name="com.nnit.phonebook.service.BGMusicService">
+        </service>
     </application>
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.SEND_SMS"/>
