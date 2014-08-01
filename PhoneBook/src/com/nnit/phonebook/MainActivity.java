@@ -621,17 +621,6 @@ public class MainActivity extends Activity {
     
     private void showAboutDialog() {
     	final View dialogView = inflater.inflate(R.layout.dialog_about, null);
-    	ImageButton bulbBtn = (ImageButton)dialogView.findViewById(R.id.btn_bulb);
-    	bulbBtn.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View arg0) {
-				Intent gameIntent = new Intent();
-				gameIntent.setAction("com.nnit.phonebook.GameActivity");
-				startActivity(gameIntent);
-			}
-    		
-    	});
     	
     	Dialog dialog = new AlertDialog.Builder(this)
         	.setIcon(R.drawable.ic_launcher)
@@ -810,4 +799,6 @@ public class MainActivity extends Activity {
     	}
 		return true;
 	}
+	
+	
 }

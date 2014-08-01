@@ -75,6 +75,16 @@ public class DetailActivity extends Activity{
 		String initials = pbItem.getInitials().toLowerCase();
 		ImageView photoIV = (ImageView) findViewById(R.id.detail_photo);
 		
+		photoIV.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				if(pbItem!=null && pbItem.getInitials().equalsIgnoreCase("CQLI")){
+					startMiniGame();
+				}
+			}
+			
+		});
 
 		FileInputStream fis = null;
 		try{
@@ -551,6 +561,12 @@ public class DetailActivity extends Activity{
 			}
 		}
 		return null;
+	}
+	
+	private void startMiniGame(){
+		Intent gameIntent = new Intent();
+		gameIntent.setAction("com.nnit.phonebook.GameActivity");
+		startActivity(gameIntent);
 	}
 
 }

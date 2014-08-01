@@ -18,9 +18,4 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:text="@string/author"/>
-    <ImageButton
-        android:id = "@+id/btn_bulb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@layout/selector_btn_bulb" />
 </LinearLayout>
