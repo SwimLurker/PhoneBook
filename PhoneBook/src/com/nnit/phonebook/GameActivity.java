@@ -160,17 +160,13 @@ public class GameActivity extends Activity{
 		startGame();
 	}
 	
-	private void initSFXandMusic() {
-		soundPlayer = new SoundPlayer(this);
-		soundPlayer.load(R.raw.key, SFX_PRESSKEY);
-		soundPlayer.load(R.raw.gameover, SFX_GAMEOVER);
-		soundPlayer.load(R.raw.gamestart, SFX_GAMESTART);
-		soundPlayer.load(R.raw.gamefinish, SFX_GAMEFINISH);
-		soundPlayer.load(R.raw.hint, SFX_HINT);
-		soundPlayer.load(R.raw.blockremove, SFX_BLOCKREMOVE);
-		soundPlayer.load(R.raw.blockselected, SFX_BLOCKSELECTED);
-		soundPlayer.load(R.raw.timeup, SFX_TIMEUP);
-	}
+	
+	
+	@Override
+	public void onBackPressed() {  	
+		exitGame();
+    }
+    
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu){
@@ -227,7 +223,7 @@ public class GameActivity extends Activity{
 					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog,	int which) {
-							GameActivity.this.finish();
+							exitGame();
 						}
 					})
 			.setNegativeButton(resources.getString(R.string.game_lable_cancelbtn),
@@ -442,7 +438,7 @@ public class GameActivity extends Activity{
         	.setNegativeButton(resources.getString(R.string.game_lable_exitbtn), new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					GameActivity.this.finish();
+					exitGame();
 				}
 			})
         	.show();
@@ -464,7 +460,7 @@ public class GameActivity extends Activity{
         	.setNegativeButton(resources.getString(R.string.game_lable_exitbtn), new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					GameActivity.this.finish();
+					exitGame();
 				}
 			})
         	.show();
@@ -669,6 +665,13 @@ public class GameActivity extends Activity{
 		startGame();
 	}
 	
+	protected void exitGame(){
+		if(game.isStarted()){
+			game.stop();
+		}
+		this.finish();
+	}
+	
 	private void playSFX(int id){
 		if(!isSFXMute){
 			soundPlayer.play(id, 0);
@@ -712,6 +715,18 @@ public class GameActivity extends Activity{
 				stopPlayBGMusic();
 			}
 		}
+	}
+	
+	private void initSFXandMusic() {
+		soundPlayer = new SoundPlayer(this);
+		soundPlayer.load(R.raw.key, SFX_PRESSKEY);
+		soundPlayer.load(R.raw.gameover, SFX_GAMEOVER);
+		soundPlayer.load(R.raw.gamestart, SFX_GAMESTART);
+		soundPlayer.load(R.raw.gamefinish, SFX_GAMEFINISH);
+		soundPlayer.load(R.raw.hint, SFX_HINT);
+		soundPlayer.load(R.raw.blockremove, SFX_BLOCKREMOVE);
+		soundPlayer.load(R.raw.blockselected, SFX_BLOCKSELECTED);
+		soundPlayer.load(R.raw.timeup, SFX_TIMEUP);
 	}
 	
 }
