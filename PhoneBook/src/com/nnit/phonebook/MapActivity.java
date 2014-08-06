@@ -384,6 +384,7 @@ public class MapActivity extends Activity{
 		}else if(mode == MODE.ZOOM){
 			float afterLength = getDistance(event);
 			if(afterLength > 10f){
+				midPoint(mid, event);
 				matrix.set(savedMatrix);
 				float scale = afterLength / beforeLength;
 				matrix.postScale(scale, scale, mid.x, mid.y);
@@ -398,8 +399,8 @@ public class MapActivity extends Activity{
 	}
 	
 	private void midPoint(PointF point, MotionEvent event){
-		float x = event.getX(0) - event.getX(1);
-		float y = event.getY(0) - event.getY(1);
+		float x = event.getX(0) + event.getX(1);
+		float y = event.getY(0) + event.getY(1);
 		
 		point.set(x/2, y/2);
 	}
