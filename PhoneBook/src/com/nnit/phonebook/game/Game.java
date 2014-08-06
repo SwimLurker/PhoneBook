@@ -298,6 +298,8 @@ public class Game {
 			bitmaps.remove(index);
 			imageIDs.remove(index);
 		}
+		
+		gameChecking();
 	}
 	
 	public void pause() {
